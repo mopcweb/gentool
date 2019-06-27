@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  o365-widget:
+    build: ./
+    container_name: o365-widget-server
+    restart: unless-stopped:0
+    links:
+      - redis:redis
+    environment:
+      - REDIS_URL=redis://redis:6301
+      - REDIS_PASSWORD=redisPassw0rdgreggr
+    ports:
+      - "4201:4201"
+    command:
+      sh -c 'npm i && cd client && npm i && cd .. && npm run prod'
+    expose:
+      - 4201
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
