@@ -10,11 +10,11 @@ services:
       - mongodb:mongodb
     environment:
       - REDIS_URL=redis://redis:6301
-      - REDIS_PASSWORD=redisPassw0rd42t34t4gr
+      - REDIS_PWD=redisPassw0rd42t34t4gr
       - MONGO_HOST=mongodb
       - MONGO_PORT=27017
       - MONGO_USER=root
-      - MONGO_PASSWORD=rootPass2ab4e199
+      - MONGO_PWD=rootPass2ab4e199
       - MONGO_AUTH_SOURCE=admin
     ports:
       - "4201:4201"

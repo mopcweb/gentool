@@ -17,6 +17,9 @@ import { ILogsController } from '../interfaces';
 // =====> Controllers
 import { DB } from './';
 
+// =====> Models
+import { LogsModel } from '../models';
+
 // =====> Services
 import { msg, logger } from '../services';
 
@@ -54,7 +57,7 @@ export class LogsController implements ILogsController {
     if (sort && sort.toLowerCase() === 'desc') direction = '-timestamp';
 
     // Find all logs in MongoDB
-    await DB.Models.Logs
+    await LogsModel
       .find(filter)
       .skip(skip)
       .limit(limit)
@@ -74,7 +77,7 @@ export class LogsController implements ILogsController {
     }
 
     // Find amount of allLogs -> to define if there is nexPage
-    await DB.Models.Logs
+    await LogsModel
       .find({ })
       .countDocuments((err, count) => {
         // If error
@@ -108,7 +111,7 @@ export class LogsController implements ILogsController {
     let response: any;
 
     // Save new item
-    await DB.Models.Logs
+    await LogsModel
       .deleteMany(
         id === 'all'
           ? { }

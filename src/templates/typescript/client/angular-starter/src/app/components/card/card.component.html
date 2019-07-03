@@ -1,0 +1,43 @@
+<!-- <mat-card [ngClass]="class ? 'Card ' + class : 'Card'"> -->
+<mat-card class="Card">
+
+  <!---------------------------------------------------------------------->
+  <!--                          Card Header
+  <!---------------------------------------------------------------------->
+
+  <mat-card-header class="Card-Header">
+    <div mat-card-avatar
+      class="Card-Avatar"
+      [ngStyle]="{ backgroundImage: 'url(' + img + ')' }">
+    </div>
+
+    <mat-card-title #cardTitle class="Card-Title">{{ title }}</mat-card-title>
+
+    <mat-card-subtitle #cardSubTitle class="Card-SubTitle">
+      {{ subtitle }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <!---------------------------------------------------------------------->
+  <!--                           Card Img
+  <!---------------------------------------------------------------------->
+
+  <img mat-card-image class="Card-Img"
+    [src]="img" [alt]="alt ? alt : 'Image not found'">
+
+  <!---------------------------------------------------------------------->
+  <!--                          Card Content
+  <!---------------------------------------------------------------------->
+
+  <mat-card-content #cardContent class="Card-Content">
+    <ng-content></ng-content>
+  </mat-card-content>
+
+  <!---------------------------------------------------------------------->
+  <!--                          Card Actions
+  <!---------------------------------------------------------------------->
+
+  <mat-card-actions>
+    <a mat-stroked-button [routerLink]="link" (click)="bubbleOut($event)">{{ linktext }}</a>
+  </mat-card-actions>
+</mat-card>

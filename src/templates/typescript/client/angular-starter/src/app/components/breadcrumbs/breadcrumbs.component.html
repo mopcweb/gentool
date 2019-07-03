@@ -1,0 +1,39 @@
+<div class="Breadcrumbs" *ngFor="let breadcrumb of breadcrumbs; let i = index">
+
+  <!---------------------------------------------------------------------->
+  <!--                      Link for prev routes
+  <!---------------------------------------------------------------------->
+
+  <a mat-button
+    class="Breadcrumbs-Link"
+    *ngIf="i !== breadcrumbs.length - 1"
+    [routerLink]="breadcrumb.url"
+  >
+    <mat-icon class="Breadcrumbs-Icon">{{ breadcrumb.icon }}</mat-icon>
+    {{ breadcrumb.title }}
+  </a>
+
+  <!---------------------------------------------------------------------->
+  <!--                 Disabled link for current route
+  <!---------------------------------------------------------------------->
+
+  <a mat-button disabled
+    class="Breadcrumbs-Link Breadcrumbs-Link_disabled"
+    *ngIf="i === breadcrumbs.length - 1"
+  >
+    <mat-icon class="Breadcrumbs-Icon">{{ breadcrumb.icon }}</mat-icon>
+    {{ breadcrumb.title }}
+  </a>
+
+  <!---------------------------------------------------------------------->
+  <!--                      Arrow to next route
+  <!---------------------------------------------------------------------->
+
+  <mat-icon
+    class="Breadcrumbs-IconNext"
+    *ngIf="i !== breadcrumbs.length - 1 && breadcrumbs[i + 1].title"
+  >
+    keyboard_arrow_right
+  </mat-icon>
+  <!-- arrow_right_alt -->
+</div>

@@ -13,12 +13,6 @@ import { connect, connection, Connection } from 'mongoose';
 // =====> Config
 import { mongoLogsUri, MongoOpts } from '../utils/config';
 
-// =====> Interfaces
-import { IModels } from '../interfaces';
-
-// =====> Models
-import { LogsModel } from '../models';
-
 // =====> Services
 import { logger, msg } from '../services';
 
@@ -27,17 +21,6 @@ import { logger, msg } from '../services';
 /* ------------------------------------------------------------------- */
 
 export class DB {
-
-  /* ------------------------------------------------------------------- */
-  /*                    Static getter to get Models
-  /* ------------------------------------------------------------------- */
-
-  public static get Models() {
-    if (!DB.instance)
-      DB.connect();
-
-    return DB.instance.models;
-  }
 
   /* ------------------------------------------------------------------- */
   /*                   Static method - connect to DB
@@ -60,11 +43,6 @@ export class DB {
     // Close connection if not connected
     if (!DB.instance.db.readyState)
       return DB.instance.error(error);
-
-    // Add necessary Models
-    DB.instance.models = {
-      Logs: LogsModel
-    };
 
     return msg(DB.instance.db.readyState);
   }
@@ -90,7 +68,6 @@ export class DB {
 
   private static instance: DB;
   private db: Connection;
-  private models: IModels;
 
   /* ------------------------------------------------------------------- */
   /*                           Constructor

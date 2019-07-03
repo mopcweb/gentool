@@ -9,7 +9,7 @@ services:
       - redis:redis
     environment:
       - REDIS_URL=redis://redis:6301
-      - REDIS_PASSWORD=redisPassw0rd42t34t4gr
+      - REDIS_PWD=redisPassw0rd42t34t4gr
     ports:
       - "4201:4201"
     command:

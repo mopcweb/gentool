@@ -4,8 +4,13 @@
 /*
 /* ################################################################### */
 
-import * as fs from 'fs';
 import * as path from 'path';
+
+/* ------------------------------------------------------------------- */
+/*                              Helpers
+/* ------------------------------------------------------------------- */
+
+import { dirsArray } from '../services';
 
 /* ------------------------------------------------------------------- */
 /*                                Info
@@ -24,9 +29,6 @@ export const dir = process.cwd();
 // =====> Langs
 export const langsDir = path.join(__dirname, '../templates');
 
-// =====> Templates
-export const templatesDir = path.join(__dirname, '../templates/typescript');
-
 // =====> Docker files
 export const dockerDir = path.join(__dirname, '../docker');
 
@@ -34,11 +36,16 @@ export const dockerDir = path.join(__dirname, '../docker');
 /*                           Directories lists
 /* ------------------------------------------------------------------- */
 
-// =====> Langs dirs
-export const langs = fs.readdirSync(langsDir);
+// =====> Langs dirs' list
+export const langs = dirsArray(langsDir);
 
-// =====> Templates dirs
-export const templates = fs.readdirSync(templatesDir);
+// =====> Templates dirs' list
+export const tsTemplates = dirsArray(`${langsDir}/typescript`);
+// export const jsTemplates = dirsArray(`${langsDir}/javascript`);
+
+// =====> Client templates
+export const tsClientTemplates = dirsArray(`${langsDir}/typescript/client`);
+// export const jsClientTemplates = dirsArray(`${templatesDir}/javascript/client`);
 
 /* ------------------------------------------------------------------- */
 /*                            Question Titles
@@ -46,28 +53,14 @@ export const templates = fs.readdirSync(templatesDir);
 
 export const questionTitles = {
   choice: 'project-choice',
+  clientType: 'project-clientType',
   db: 'project-db',
   docker: 'project-docker',
+  framework: 'project-framework',
   lang: 'project-lang',
+  material: 'project-material',
   redis: 'project-redis',
+  router: 'project-router',
   root: 'project-root',
   title: 'project-title',
-};
-
-/* ------------------------------------------------------------------- */
-/*                           Templates options
-/* ------------------------------------------------------------------- */
-
-export const templateOptions = (dir: string) => {
-  // Get all dirs
-  const array = fs.readdirSync(dir);
-
-  // Create options object
-  const options: { [x: string]: any } = { };
-
-  // Iterate over array and add item to the object
-  array.forEach(item => options[item] = `${dir}/${item}`);
-
-  // Return
-  return options;
 };

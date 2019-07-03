@@ -1,0 +1,56 @@
+/* ------------------------------------------------------------------- */
+/*                             Variables
+/* ------------------------------------------------------------------- */
+
+@import '../../utils/variables'
+
+/* ------------------------------------------------------------------- */
+/*                              Loader
+/* ------------------------------------------------------------------- */
+
+.Loader
+  position: fixed
+  top: $headerHeight
+  left: 0
+  width: 100%
+  height: $loaderHeight
+  background-position: center
+  background-size: cover
+  background-repeat: no-repeat
+  animation: fadeout
+  animation-iteration-count: 1
+  z-index: 11
+
+  @media screen and (max-width: 599px)
+    top: $headerHeightMobile
+
+  &:before
+    position: absolute
+    top: 0
+    left: 0
+    display: block
+    width: 100%
+    height: 100%
+    background: $lightdarkTransparent
+    content: ''
+    z-index: 1112
+
+  &-Material
+    position: absolute
+    top: calc(50% - 50px)
+    left: calc(50% - 50px)
+    z-index: 1113
+
+/* ------------------------------------------------------------------- */
+/*                             Animation
+/* ------------------------------------------------------------------- */
+
+@keyframes spinner
+  to
+    transform: rotate(360deg)
+
+@keyframes fadeout
+  50%
+    opacity: 1
+  100%
+    opacity: 0

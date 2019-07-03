@@ -13,11 +13,11 @@ import { execSync } from 'child_process';
 
 // =====> Config
 import {
-  dir, templateOptions as options, questionTitles, templatesDir, dockerDir
+  dir, questionTitles, langsDir, dockerDir
 } from '../utils/config';
 
 // =====> Services
-import { questions } from './';
+import { questions, dirsObject as options } from './';
 
 /* ------------------------------------------------------------------- */
 /*                            Ask in console
@@ -25,38 +25,81 @@ import { questions } from './';
 
 export const prompt = () => inquirer.prompt(questions)
   .then(answers => {
-    // Get answers
-    const lang = answers[questionTitles.lang];
-    const root = answers[questionTitles.root];
-    const choice = answers[questionTitles.choice];
-    const title = answers[questionTitles.title];
-    const redis = answers[questionTitles.redis];
-    const db = answers[questionTitles.db];
-    const docker = answers[questionTitles.docker];
-
-    // Choose basic template
-    const template = root === 'Project'
-      ? addDbs(`${templatesDir}/${choice}`, redis, db)
-      : addDbs(`${templatesDir}/${choice}`, redis, db) + '/src';
-
-    // Create new project path
-    const project = `${dir}/${title}`;
-
-    // Copy template
-    create(template, project);
-
-    // Add docker
-    if (docker === 'Yes')
-      root === 'Project'
-      ? addDocker(project + '/src', redis, db)
-      : addDocker(project, redis, db);
+    createServer(answers);
   });
+
+/* ------------------------------------------------------------------- */
+/*                            Create client
+/* ------------------------------------------------------------------- */
+
+const createClient = (answers: inquirer.Answers) => {
+  // Get answers
+  const lang = answers[questionTitles.lang];
+  const root = answers[questionTitles.root];
+  const choice = answers[questionTitles.choice];
+  const title = answers[questionTitles.title];
+  const framework = answers[questionTitles.framework];
+  const clientType = answers[questionTitles.clientType];
+  const router = answers[questionTitles.router];
+  const material = answers[questionTitles.material];
+
+  // Stop if choice !== 'client'
+  if (choice !== 'client')
+    return;
+
+  // Choose basic template
+  const template = root === 'Project'
+    ? `${langsDir}/${lang}/${choice}`
+    : `${langsDir}/${lang}/${choice}/src`;
+
+  // Create new project path
+  const project = `${dir}/${title}`;
+
+  // Copy template
+  // copy(template, project);
+};
+
+/* ------------------------------------------------------------------- */
+/*                            Create server
+/* ------------------------------------------------------------------- */
+
+const createServer = (answers: inquirer.Answers) => {
+  // Get answers
+  const lang = answers[questionTitles.lang];
+  const root = answers[questionTitles.root];
+  const choice = answers[questionTitles.choice];
+  const title = answers[questionTitles.title];
+  const redis = answers[questionTitles.redis];
+  const db = answers[questionTitles.db];
+  const docker = answers[questionTitles.docker];
+
+  // Stop if choice !== 'server'
+  if (choice !== 'server')
+    return;
+
+  // Choose basic template
+  const template = root === 'Project'
+    ? addDbs(`${langsDir}/${lang}/${choice}`, redis, db)
+    : addDbs(`${langsDir}/${lang}/${choice}`, redis, db) + '/src';
+
+  // Create new project path
+  const project = `${dir}/${title}`;
+
+  // Copy template
+  copy(template, project);
+
+  // Add docker
+  if (docker === 'Yes')
+    root === 'Project'
+    ? addDocker(project + '/src', redis, db)
+    : addDocker(project, redis, db);
+};
 
 /* ------------------------------------------------------------------- */
 /*                            Copy template
 /* ------------------------------------------------------------------- */
 
-const create = (oldPath: string, newPath: string) =>
+const copy = (oldPath: string, newPath: string) =>
   execSync(`cp -r ${oldPath} ${newPath}`);
 
 /* ------------------------------------------------------------------- */

@@ -1,0 +1,49 @@
+/* ------------------------------------------------------------------- */
+/*                             Variables
+/* ------------------------------------------------------------------- */
+
+@import '../../utils/variables'
+
+/* ------------------------------------------------------------------- */
+/*                            Breadcrumbs
+/* ------------------------------------------------------------------- */
+
+\:host, .Breadcrumbs
+  display: flex
+  align-items: center
+
+  &-Link
+    font-size: 14px
+    font-weight: 500
+    padding-left: 8px
+
+    @media screen and (max-width: 768px)
+      padding: 0 8px
+      font-size: 12px
+
+    @media screen and (max-width: 568px)
+      font-size: 10px
+      padding: 0 4px
+
+    @media screen and (max-width: 414px)
+      min-width: auto
+
+    &_disabled
+      color: $accent !important
+
+  &-Icon
+    margin-right: 5px
+
+    @media screen and (max-width: 768px)
+      height: 22px
+      font-size: 20px
+
+    @media screen and (max-width: 414px)
+      display: none
+
+  &-IconNext
+
+    @media screen and (max-width: 768px)
+      width: 20px
+      height: 20px
+      font-size: 20px
