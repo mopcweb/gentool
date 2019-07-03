@@ -5,11 +5,6 @@ services:
     build: ./
     container_name: o365-widget-server
     restart: unless-stopped:0
-    links:
-      - redis:redis
-    environment:
-      - REDIS_URL=redis://redis:6301
-      - REDIS_PASSWORD=redisPassw0rdgreggr
     ports:
       - "4201:4201"
     command:
