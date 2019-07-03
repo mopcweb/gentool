@@ -5,6 +5,9 @@
 Been in root project directory
 
 ```bash
+# Go to src
+cd src
+
 # Install dependencies (if not installed yet)
 npm i
 

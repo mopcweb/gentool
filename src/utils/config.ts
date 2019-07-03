@@ -12,7 +12,7 @@ import * as path from 'path';
 /* ------------------------------------------------------------------- */
 
 export const title = 'Gentool';
-export const version = 'v1.0.0';
+export const version = 'v0.1.0';
 
 /* ------------------------------------------------------------------- */
 /*                             Directories
@@ -45,12 +45,13 @@ export const templates = fs.readdirSync(templatesDir);
 /* ------------------------------------------------------------------- */
 
 export const questionTitles = {
-  lang: 'project-lang',
   choice: 'project-choice',
-  title: 'project-title',
-  redis: 'project-redis',
   db: 'project-db',
-  docker: 'project-docker'
+  docker: 'project-docker',
+  lang: 'project-lang',
+  redis: 'project-redis',
+  root: 'project-root',
+  title: 'project-title',
 };
 
 /* ------------------------------------------------------------------- */
@@ -70,10 +71,3 @@ export const templateOptions = (dir: string) => {
   // Return
   return options;
 };
-
-// export const templateOptions = {
-//   basic: '/basic',
-//   redis: '/redis',
-//   mongo: '/mongo',
-//   redis_mongo: '/redis_mongo',
-// };

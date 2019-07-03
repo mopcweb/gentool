@@ -27,6 +27,7 @@ export const prompt = () => inquirer.prompt(questions)
   .then(answers => {
     // Get answers
     const lang = answers[questionTitles.lang];
+    const root = answers[questionTitles.root];
     const choice = answers[questionTitles.choice];
     const title = answers[questionTitles.title];
     const redis = answers[questionTitles.redis];
@@ -34,7 +35,9 @@ export const prompt = () => inquirer.prompt(questions)
     const docker = answers[questionTitles.docker];
 
     // Choose basic template
-    const template = addDbs(`${templatesDir}/${choice}`, redis, db);
+    const template = root === 'Project'
+      ? addDbs(`${templatesDir}/${choice}`, redis, db)
+      : addDbs(`${templatesDir}/${choice}`, redis, db) + '/src';
 
     // Create new project path
     const project = `${dir}/${title}`;
@@ -44,7 +47,9 @@ export const prompt = () => inquirer.prompt(questions)
 
     // Add docker
     if (docker === 'Yes')
-      addDocker(project, redis, db);
+      root === 'Project'
+      ? addDocker(project + '/src', redis, db)
+      : addDocker(project, redis, db);
   });
 
 /* ------------------------------------------------------------------- */
