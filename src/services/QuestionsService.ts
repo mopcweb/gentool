@@ -5,7 +5,7 @@
 /* ################################################################### */
 
 import * as fs from 'fs';
-import * as inquirer from 'inquirer';
+import { Questions } from 'inquirer';
 
 /* ------------------------------------------------------------------- */
 /*                              Config
@@ -13,7 +13,8 @@ import * as inquirer from 'inquirer';
 
 // =====> Config
 import {
-  langs, tsTemplates, tsClientTemplates, questionTitles, dir
+  langs, tsTemplates, questionTitles, dir, tsClientFrameworks,
+  tsReactTemplates, tsAngularTemplates
 } from '../utils/config';
 
 /* ------------------------------------------------------------------- */
@@ -22,7 +23,8 @@ import {
 
 /* tslint:disable */
 
-export const questions: inquirer.Questions = [
+export const questions: Questions = [
+  /* ********************** GENERAL QUESTIONS  ********************** */
   {
     name: questionTitles.title,
     type: 'input',
@@ -30,10 +32,12 @@ export const questions: inquirer.Questions = [
     validate: input => {
       if (/^([A-Za-z\-\_\d])+$/.test(input))
         return fs.existsSync(`${dir}/${input}`)
-          ? 'There is already a directory with such name. Please, choose another project title.'
+          ? 'There is already a directory with such name. ' +
+            'Please, choose another project title.'
           : true;
       else
-        return 'Project name may only include letters, numbers, underscores and hashes.';
+        return 'Project name may only include letters, ' +
+               'numbers, underscores and hashes.';
     }
   },
   {
@@ -48,6 +52,9 @@ export const questions: inquirer.Questions = [
     message: 'Is that new root project or just a service (part of existing project)?',
     choices: ['Project', 'Service']
   },
+
+  /* ************************ LANG QUESTIONS  *********************** */
+
   {
     name: questionTitles.choice,
     type: 'list',
@@ -55,12 +62,14 @@ export const questions: inquirer.Questions = [
     message: 'What project would you like to generate?',
     choices: tsTemplates
   },
+
+  /* ********************** CLIENT QUESTIONS  *********************** */
   {
     name: questionTitles.framework,
     type: 'list',
     when: res => res[questionTitles.choice] === 'client' ? true : false,
     message: 'Choose frontend framework:',
-    choices: ['Angular', 'React']
+    choices: tsClientFrameworks
   },
   {
     name: questionTitles.clientType,
@@ -69,6 +78,8 @@ export const questions: inquirer.Questions = [
     message: 'Create new project from scratch or use one of provided templates?',
     choices: ['New', 'Template']
   },
+
+  /* ******************** CLIENT & NEW QUESTIONS  ******************** */
   {
     name: questionTitles.router,
     type: 'list',
@@ -88,20 +99,37 @@ export const questions: inquirer.Questions = [
       res[questionTitles.clientType] === 'New'
         ? true
         : false,
-    message: 'Use Material Design',
+    message: 'Add Material Design?',
     choices: ['Yes', 'No']
   },
+
+  /* ***************** CLIENT & TEMPLATE QUESTIONS  ****************** */
   {
-    name: questionTitles.router,
+    name: questionTitles.clientTemplate,
     type: 'list',
     when: res =>
       res[questionTitles.choice] === 'client' &&
-      res[questionTitles.clientType] === 'Template'
+      res[questionTitles.clientType] === 'Template' &&
+      res[questionTitles.framework] === 'Angular'
         ? true
         : false,
     message: 'Choose template:',
-    choices: tsClientTemplates
+    choices: tsAngularTemplates
   },
+  {
+    name: questionTitles.clientTemplate,
+    type: 'list',
+    when: res =>
+      res[questionTitles.choice] === 'client' &&
+      res[questionTitles.clientType] === 'Template' &&
+      res[questionTitles.framework] === 'React'
+        ? true
+        : false,
+    message: 'Choose template:',
+    choices: tsReactTemplates
+  },
+
+  /* ********************** SERVER QUESTIONS  ********************** */
   {
     name: questionTitles.redis,
     type: 'list',

@@ -44,8 +44,15 @@ export const tsTemplates = dirsArray(`${langsDir}/typescript`);
 // export const jsTemplates = dirsArray(`${langsDir}/javascript`);
 
 // =====> Client templates
-export const tsClientTemplates = dirsArray(`${langsDir}/typescript/client`);
-// export const jsClientTemplates = dirsArray(`${templatesDir}/javascript/client`);
+export const tsClientFrameworks = dirsArray(`${langsDir}/typescript/client`);
+// export const jsClientFrameworks = dirsArray(`${templatesDir}/javascript/client`);
+
+// =====> Angular templates
+export const tsAngularTemplates = dirsArray(`${langsDir}/typescript/client/Angular`);
+
+// =====> Angular templates
+export const tsReactTemplates = dirsArray(`${langsDir}/typescript/client/React`);
+// export const jsReactTemplates = dirsArray(`${templatesDir}/javascript/client/React`);
 
 /* ------------------------------------------------------------------- */
 /*                            Question Titles
@@ -54,6 +61,7 @@ export const tsClientTemplates = dirsArray(`${langsDir}/typescript/client`);
 export const questionTitles = {
   choice: 'project-choice',
   clientType: 'project-clientType',
+  clientTemplate: 'project-clientTemplate',
   db: 'project-db',
   docker: 'project-docker',
   framework: 'project-framework',

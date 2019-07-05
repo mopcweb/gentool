@@ -26,6 +26,7 @@ import { questions, dirsObject as options } from './';
 export const prompt = () => inquirer.prompt(questions)
   .then(answers => {
     createServer(answers);
+    createClient(answers);
   });
 
 /* ------------------------------------------------------------------- */
@@ -39,6 +40,7 @@ const createClient = (answers: inquirer.Answers) => {
   const choice = answers[questionTitles.choice];
   const title = answers[questionTitles.title];
   const framework = answers[questionTitles.framework];
+  const clientTemplate = answers[questionTitles.clientTemplate];
   const clientType = answers[questionTitles.clientType];
   const router = answers[questionTitles.router];
   const material = answers[questionTitles.material];
@@ -47,16 +49,20 @@ const createClient = (answers: inquirer.Answers) => {
   if (choice !== 'client')
     return;
 
+  // For now if New type -> stop
+  if (clientType !== 'Template')
+    return;
+
   // Choose basic template
   const template = root === 'Project'
-    ? `${langsDir}/${lang}/${choice}`
-    : `${langsDir}/${lang}/${choice}/src`;
+    ? `${langsDir}/${lang}/${choice}/${framework}/${clientTemplate}`
+    : `${langsDir}/${lang}/${choice}/${framework}/${clientTemplate}/src`;
 
   // Create new project path
   const project = `${dir}/${title}`;
 
   // Copy template
-  // copy(template, project);
+  copy(template, project);
 };
 
 /* ------------------------------------------------------------------- */
