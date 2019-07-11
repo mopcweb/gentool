@@ -19,14 +19,14 @@ import { port } from './utils/config';
 // =====> Routes
 import { routes } from './utils/routes';
 
+// =====> Constants
+import { launchMsg } from './utils/constants';
+
 // =====> Router
 import router from './routes';
 
 // =====> Services
 import { logger, showAPIDocs } from './services';
-
-// =====> Constants
-import { launchMsg } from './utils/constants';
 
 /* ------------------------------------------------------------------- */
 /*                          Show greetings

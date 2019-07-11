@@ -46,7 +46,7 @@ export const showAPIDocs = (routes: any, title?: string, color?: string) => {
     key,
     colorizeString(routes[key].method),
     chalk.yellow(routes[key].endPoint),
-    chalk.green('routes/' + key.toLowerCase() + '.ts')
+    chalk.green('server/routes/' + key.toLowerCase() + '.ts')
   ]);
 
   // Console.log table

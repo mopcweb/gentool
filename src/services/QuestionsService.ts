@@ -14,7 +14,7 @@ import { Questions } from 'inquirer';
 // =====> Config
 import {
   langs, tsTemplates, questionTitles, dir, tsClientFrameworks,
-  tsReactTemplates, tsAngularTemplates
+  tsReactTemplates, tsAngularTemplates, tsFullstackTemplates
 } from '../utils/config';
 
 /* ------------------------------------------------------------------- */
@@ -69,39 +69,40 @@ export const questions: Questions = [
     type: 'list',
     when: res => res[questionTitles.choice] === 'client' ? true : false,
     message: 'Choose frontend framework:',
-    choices: tsClientFrameworks
+    // choices: tsClientFrameworks
+    choices: ['Angular']
   },
-  {
-    name: questionTitles.clientType,
-    type: 'list',
-    when: res => res[questionTitles.choice] === 'client' ? true : false,
-    message: 'Create new project from scratch or use one of provided templates?',
-    choices: ['New', 'Template']
-  },
+  // {
+  //   name: questionTitles.clientType,
+  //   type: 'list',
+  //   when: res => res[questionTitles.choice] === 'client' ? true : false,
+  //   message: 'Create new project from scratch or use one of provided templates?',
+  //   choices: ['New', 'Template']
+  // },
 
   /* ******************** CLIENT & NEW QUESTIONS  ******************** */
-  {
-    name: questionTitles.router,
-    type: 'list',
-    when: res =>
-      res[questionTitles.choice] === 'client' &&
-      res[questionTitles.clientType] === 'New'
-        ? true
-        : false,
-    message: 'Add routing?',
-    choices: ['Yes', 'No']
-  },
-  {
-    name: questionTitles.router,
-    type: 'list',
-    when: res =>
-      res[questionTitles.choice] === 'client' &&
-      res[questionTitles.clientType] === 'New'
-        ? true
-        : false,
-    message: 'Add Material Design?',
-    choices: ['Yes', 'No']
-  },
+  // {
+  //   name: questionTitles.router,
+  //   type: 'list',
+  //   when: res =>
+  //     res[questionTitles.choice] === 'client' &&
+  //     res[questionTitles.clientType] === 'New'
+  //       ? true
+  //       : false,
+  //   message: 'Add routing?',
+  //   choices: ['Yes', 'No']
+  // },
+  // {
+  //   name: questionTitles.router,
+  //   type: 'list',
+  //   when: res =>
+  //     res[questionTitles.choice] === 'client' &&
+  //     res[questionTitles.clientType] === 'New'
+  //       ? true
+  //       : false,
+  //   message: 'Add Material Design?',
+  //   choices: ['Yes', 'No']
+  // },
 
   /* ***************** CLIENT & TEMPLATE QUESTIONS  ****************** */
   {
@@ -109,7 +110,7 @@ export const questions: Questions = [
     type: 'list',
     when: res =>
       res[questionTitles.choice] === 'client' &&
-      res[questionTitles.clientType] === 'Template' &&
+      // res[questionTitles.clientType] === 'Template' &&
       res[questionTitles.framework] === 'Angular'
         ? true
         : false,
@@ -121,7 +122,7 @@ export const questions: Questions = [
     type: 'list',
     when: res =>
       res[questionTitles.choice] === 'client' &&
-      res[questionTitles.clientType] === 'Template' &&
+      // res[questionTitles.clientType] === 'Template' &&
       res[questionTitles.framework] === 'React'
         ? true
         : false,
@@ -150,5 +151,14 @@ export const questions: Questions = [
     when: res => res[questionTitles.choice] === 'server' ? true : false,
     message: 'Add Docker & Docker-compose?',
     choices: ['Yes', 'No']
-  }
+  },
+
+  /* ******************** FULLSTACK QUESTIONS  ********************* */
+  {
+    name: questionTitles.fullstackTemplate,
+    type: 'list',
+    when: res => res[questionTitles.choice] === 'fullstack' ? true : false,
+    message: 'Choose template:',
+    choices: tsFullstackTemplates
+  },
 ];

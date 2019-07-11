@@ -54,21 +54,26 @@ export const tsAngularTemplates = dirsArray(`${langsDir}/typescript/client/Angul
 export const tsReactTemplates = dirsArray(`${langsDir}/typescript/client/React`);
 // export const jsReactTemplates = dirsArray(`${templatesDir}/javascript/client/React`);
 
+// =====> Fullstack templates
+export const tsFullstackTemplates = dirsArray(`${langsDir}/typescript/fullstack`);
+// export const jsFullstackTemplates = dirsArray(`${templatesDir}/javascript/fullstack`);
+
 /* ------------------------------------------------------------------- */
 /*                            Question Titles
 /* ------------------------------------------------------------------- */
 
 export const questionTitles = {
   choice: 'project-choice',
-  clientType: 'project-clientType',
   clientTemplate: 'project-clientTemplate',
+  clientType: 'project-clientType',
   db: 'project-db',
   docker: 'project-docker',
   framework: 'project-framework',
+  fullstackTemplate: 'project-fullstackTemplate',
   lang: 'project-lang',
   material: 'project-material',
   redis: 'project-redis',
-  router: 'project-router',
   root: 'project-root',
+  router: 'project-router',
   title: 'project-title',
 };

@@ -4,12 +4,16 @@
 /*
 /* ################################################################### */
 
+import { promisify } from 'util';
 import * as inquirer from 'inquirer';
-import { execSync } from 'child_process';
+import { ncp } from 'ncp';
 
 /* ------------------------------------------------------------------- */
 /*                               Config
 /* ------------------------------------------------------------------- */
+
+// Make ncp an async function
+const ncpAsync = promisify(ncp);
 
 // =====> Config
 import {
@@ -27,6 +31,7 @@ export const prompt = () => inquirer.prompt(questions)
   .then(answers => {
     createServer(answers);
     createClient(answers);
+    createFullstack(answers);
   });
 
 /* ------------------------------------------------------------------- */
@@ -41,17 +46,17 @@ const createClient = (answers: inquirer.Answers) => {
   const title = answers[questionTitles.title];
   const framework = answers[questionTitles.framework];
   const clientTemplate = answers[questionTitles.clientTemplate];
-  const clientType = answers[questionTitles.clientType];
-  const router = answers[questionTitles.router];
-  const material = answers[questionTitles.material];
+  // const clientType = answers[questionTitles.clientType];
+  // const router = answers[questionTitles.router];
+  // const material = answers[questionTitles.material];
 
   // Stop if choice !== 'client'
   if (choice !== 'client')
     return;
 
   // For now if New type -> stop
-  if (clientType !== 'Template')
-    return;
+  // if (clientType !== 'Template')
+  //   return;
 
   // Choose basic template
   const template = root === 'Project'
@@ -69,7 +74,7 @@ const createClient = (answers: inquirer.Answers) => {
 /*                            Create server
 /* ------------------------------------------------------------------- */
 
-const createServer = (answers: inquirer.Answers) => {
+const createServer = async (answers: inquirer.Answers) => {
   // Get answers
   const lang = answers[questionTitles.lang];
   const root = answers[questionTitles.root];
@@ -92,21 +97,52 @@ const createServer = (answers: inquirer.Answers) => {
   const project = `${dir}/${title}`;
 
   // Copy template
-  copy(template, project);
+  await copy(template, project);
 
   // Add docker
   if (docker === 'Yes')
     root === 'Project'
-    ? addDocker(project + '/src', redis, db)
-    : addDocker(project, redis, db);
+      ? addDocker(project + '/src', redis, db)
+      : addDocker(project, redis, db);
+};
+
+/* ------------------------------------------------------------------- */
+/*                            Create client
+/* ------------------------------------------------------------------- */
+
+const createFullstack = (answers: inquirer.Answers) => {
+  // Get answers
+  const lang = answers[questionTitles.lang];
+  const root = answers[questionTitles.root];
+  const choice = answers[questionTitles.choice];
+  const title = answers[questionTitles.title];
+  const fullstackTemplate = answers[questionTitles.fullstackTemplate];
+
+  // Stop if choice !== 'client'
+  if (choice !== 'fullstack')
+    return;
+
+  // Choose basic template
+  const template = root === 'Project'
+    ? `${langsDir}/${lang}/${choice}/${fullstackTemplate}`
+    : `${langsDir}/${lang}/${choice}/${fullstackTemplate}/src`;
+
+  // Create new project path
+  const project = `${dir}/${title}`;
+
+  // Copy template
+  copy(template, project);
 };
 
 /* ------------------------------------------------------------------- */
 /*                            Copy template
 /* ------------------------------------------------------------------- */
 
-const copy = (oldPath: string, newPath: string) =>
-  execSync(`cp -r ${oldPath} ${newPath}`);
+const copy = async (oldPath: string, newPath: string) =>
+  ncpAsync(oldPath, newPath)
+    .then(() =>
+      console.log('Project setted up. Please install necessary dependencies and run'))
+    .catch(err => console.log('Error copying new project. Please try again', err));
 
 /* ------------------------------------------------------------------- */
 /*                          Add Redis / MongoDB
@@ -149,5 +185,6 @@ const addDocker = (path: string, redis: string, db: string) => {
     dockerOption = options(dockerDir).redis_mongo;
 
   // Copy docker files
-  execSync(`cp -r ${dockerOption}/ ${path}`);
+  ncpAsync(dockerOption, path)
+    .catch(err => console.log('Error copying docker files. Please try again', err));
 };

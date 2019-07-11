@@ -8,8 +8,8 @@
 node_modules
 
 ### server js
-src/server/**/*.js
-src/server/**/*.map.js
+**/server/**/*.js
+**/server/**/*.map.js
 
 ### IDE - VSCode
 .vscode/*

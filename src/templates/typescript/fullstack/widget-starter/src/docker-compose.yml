@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  widget:
+    build: ./
+    container_name: widget-server
+    restart: unless-stopped:0
+    links:
+      - redis:redis
+    environment:
+      - REDIS_URL=redis://redis:6301
+      - REDIS_PASSWORD=redisPassw0rdgreggr
+    ports:
+      - "4201:4201"
+    command:
+      sh -c 'npm i && cd client && npm i && cd .. && npm run prod'
+    expose:
+      - 4201
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  redis:
+    image: redis:alpine
+    container_name: widget-redis
+    restart: unless-stopped:0
+    command: redis-server --requirepass redisPassw0rdgreggr
+    expose:
+      - 6301
+    ports:
+      - "6301:6301"

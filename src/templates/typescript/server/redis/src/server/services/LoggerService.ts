@@ -5,10 +5,8 @@
 /* ################################################################### */
 
 /* tslint:disable */
-
 const { createLogger, transports } = require('winston');
 const { combine, simple, splat, printf } = require('winston').format;
-
 /* tslint:enable */
 
 import chalk from 'chalk';

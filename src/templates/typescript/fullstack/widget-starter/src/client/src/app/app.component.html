@@ -1,0 +1,41 @@
+<div id="root">
+
+  <!---------------------------------------------------------------------->
+  <!--                           Header
+  <!---------------------------------------------------------------------->
+
+  <app-header></app-header>
+
+  <!---------------------------------------------------------------------->
+  <!--                           Wrapper
+  <!---------------------------------------------------------------------->
+
+  <div class="Main Wrapper">
+
+    <!---------------------------------------------------------------------->
+    <!--                            Tabs
+    <!---------------------------------------------------------------------->
+
+    <mat-tab-group mat-stretch-tabs
+      class="Tabs"
+      [@.disabled]="false"
+      animationDuration="500ms"
+      [(selectedIndex)]="tabIndex"
+      (selectedTabChange)="changeTab(true)"
+      (animationDone)="changeTab(false)"
+    >
+      <mat-tab label="Tab 1" [disabled]="tabDisabled">
+      </mat-tab>
+
+      <mat-tab label="Tab 2" [disabled]="tabDisabled">
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+
+  <!---------------------------------------------------------------------->
+  <!--                            Loader
+  <!---------------------------------------------------------------------->
+
+  <app-loader type="progress"></app-loader>
+</div>

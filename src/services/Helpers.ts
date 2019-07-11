@@ -15,6 +15,7 @@ export const dirsArray = (dir: string) => {
   const array = fs.readdirSync(dir);
 
   // Iterate over array and add item to the object
+  // Ignore '.' notation names
   array.forEach((item, i) => {
     if (item[0] === '.')
       array.splice(i, 1);
@@ -36,6 +37,7 @@ export const dirsObject = (dir: string) => {
   const options: { [x: string]: any } = { };
 
   // Iterate over array and add item to the object
+  // Ignore '.' notation names
   array.forEach(item => {
     if (item[0] !== '.')
       options[item] = `${dir}/${item}`;

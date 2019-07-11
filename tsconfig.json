@@ -3,6 +3,8 @@
     "module": "commonjs",
     "target": "es6",
     "noImplicitAny": true,
+    "removeComments": true,
+    "outDir": "lib",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -15,6 +17,7 @@
     }
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "templates"
   ]
 }

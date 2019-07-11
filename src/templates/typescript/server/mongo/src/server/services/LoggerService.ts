@@ -5,10 +5,8 @@
 /* ################################################################### */
 
 /* tslint:disable */
-
 const { createLogger, transports } = require('winston');
 const { combine, simple, splat, printf } = require('winston').format;
-
 /* tslint:enable */
 
 import 'winston-mongodb';
@@ -20,7 +18,8 @@ import chalk from 'chalk';
 
 import {
   logLevel as level, logSilent as silent, mongoLogLevel,
-  mongoLogsUri as db, mongoLogsCollection as collection, MongoOpts
+  mongoLogsUri as db, mongoLogsCollection as collection, MongoOpts,
+  version, instance
 } from '../utils/config';
 
 /* ------------------------------------------------------------------- */
@@ -135,10 +134,7 @@ logger.add(new transports.MongoDB({
   options,
   capped: true,
   handleExceptions: true,
-  label: {
-    INSTANCE: process.env.INSTANCE,
-    VERSION: process.env.VERSION
-  },
+  label: { instance, version },
   level: mongoLogLevel,
   storeHost: true,
   tryReconnect: true

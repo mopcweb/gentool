@@ -42,6 +42,8 @@ export class AppComponent implements OnInit {
   /* ------------------------------------------------------------------- */
 
   private loggedUser: any;
+  private timer: any;
+  private requests = 0;
 
   /* ------------------------------------------------------------------- */
   /*                           Constructor
@@ -81,6 +83,12 @@ export class AppComponent implements OnInit {
     // Interceptor for all axios requests
     axios.interceptors.request.use(
       config => {
+        // Clear timeout for loader
+        clearTimeout(this.timer);
+
+        // Increment requests counter
+        this.requests ++;
+
         // Show loader before request
         this.loader.show();
 
@@ -94,6 +102,13 @@ export class AppComponent implements OnInit {
     // To define internet connection
     axios.interceptors.response.use(
       res => {
+        // Decrement requests counter
+        this.requests --;
+
+        // Hide loader
+        if (!this.requests)
+          this.timer = setTimeout(() => this.loader.hide(), 500);
+
         // Hide loader
         setTimeout(() => this.loader.hide(), 500);
 
@@ -101,6 +116,13 @@ export class AppComponent implements OnInit {
         return res;
       },
       err => {
+        // Decrement requests counter
+        this.requests --;
+
+        // Hide loader
+        if (!this.requests)
+          this.timer = setTimeout(() => this.loader.hide(), 500);
+
         // Hide loader
         setTimeout(() => this.loader.hide(), 500);
 
