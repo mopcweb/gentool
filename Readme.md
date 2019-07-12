@@ -1,6 +1,6 @@
 # Gen Tool Starter
 
-[![GitHub version](https://img.shields.io/badge/version-0.1.2-yellow.svg)](https://github.com/mopcweb/gentool/releases) [![npm version](https://img.shields.io/npm/v/gentool.svg)](https://www.npmjs.com/package/gentool) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mopcweb/gentool/blob/master/LICENSE)
+[![GitHub version](https://img.shields.io/badge/version-0.1.7-yellow.svg)](https://github.com/mopcweb/gentool/releases) [![npm version](https://img.shields.io/npm/v/gentool.svg)](https://www.npmjs.com/package/gentool) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mopcweb/gentool/blob/master/LICENSE)
 
 ## Description
 
@@ -192,3 +192,7 @@ _Structure:_
 ├── .editorconfig
 └── .gitignore
 ```
+
+## License
+
+This project is licensed under the terms of the [MIT license](https://github.com/mopcweb/gentool/blob/master/LICENSE).

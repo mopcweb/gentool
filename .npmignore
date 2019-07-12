@@ -4,4 +4,5 @@ src
 ### Files
 tsconfig.json
 tslint.json
+nodemon.json
 updateReadme.ts

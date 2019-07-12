@@ -73,3 +73,26 @@ export const dirsObject = (dir: string) => {
   // Return
   return options;
 };
+
+/* ------------------------------------------------------------------- */
+/*                   Rename .npmignore to .gitignore
+/* ------------------------------------------------------------------- */
+
+export const rename = (dir: string, fileList: any[] = []) => {
+  const files = fs.readdirSync(dir);
+
+  files.forEach(file => {
+    if (fs.statSync(path.join(dir, file)).isDirectory())
+      fileList = rename(path.join(dir, file), fileList);
+    else
+      if (/.npmignore$/.test(file)) {
+        const name = '.gitignore';
+        const oldSrc = path.join(dir, file);
+        const newSrc = path.join(dir, name);
+        fs.renameSync(oldSrc, newSrc);
+        fileList.push({ newSrc, oldSrc });
+      }
+  });
+
+  return fileList;
+};

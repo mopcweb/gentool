@@ -21,24 +21,24 @@ import {
 } from '../utils/config';
 
 // =====> Services
-import { questions, dirsObject as options } from './';
+import { questions, dirsObject as options, rename } from './';
 
 /* ------------------------------------------------------------------- */
 /*                            Ask in console
 /* ------------------------------------------------------------------- */
 
 export const prompt = () => inquirer.prompt(questions)
-  .then(answers => {
-    createServer(answers);
-    createClient(answers);
-    createFullstack(answers);
+  .then(async answers => {
+    await createServer(answers);
+    await createClient(answers);
+    await createFullstack(answers);
   });
 
 /* ------------------------------------------------------------------- */
 /*                            Create client
 /* ------------------------------------------------------------------- */
 
-const createClient = (answers: inquirer.Answers) => {
+const createClient = async (answers: inquirer.Answers) => {
   // Get answers
   const lang = answers[questionTitles.lang];
   const root = answers[questionTitles.root];
@@ -67,7 +67,10 @@ const createClient = (answers: inquirer.Answers) => {
   const project = `${dir}/${title}`;
 
   // Copy template
-  copy(template, project);
+  await copy(template, project);
+
+  // Rename
+  rename(project);
 };
 
 /* ------------------------------------------------------------------- */
@@ -99,6 +102,9 @@ const createServer = async (answers: inquirer.Answers) => {
   // Copy template
   await copy(template, project);
 
+  // Rename
+  rename(project);
+
   // Add docker
   if (docker === 'Yes')
     root === 'Project'
@@ -110,7 +116,7 @@ const createServer = async (answers: inquirer.Answers) => {
 /*                            Create client
 /* ------------------------------------------------------------------- */
 
-const createFullstack = (answers: inquirer.Answers) => {
+const createFullstack = async (answers: inquirer.Answers) => {
   // Get answers
   const lang = answers[questionTitles.lang];
   const root = answers[questionTitles.root];
@@ -131,7 +137,10 @@ const createFullstack = (answers: inquirer.Answers) => {
   const project = `${dir}/${title}`;
 
   // Copy template
-  copy(template, project);
+  await copy(template, project);
+
+  // Rename
+  rename(project);
 };
 
 /* ------------------------------------------------------------------- */
