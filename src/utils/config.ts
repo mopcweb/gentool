@@ -5,19 +5,22 @@
 /* ################################################################### */
 
 import * as path from 'path';
+/* tslint:disable */
+const pack = require('../../package.json');
+/* tslint:enable */
 
 /* ------------------------------------------------------------------- */
 /*                              Helpers
 /* ------------------------------------------------------------------- */
 
-import { dirsArray } from '../services';
+import { dirsArray, capitalize } from '../services';
 
 /* ------------------------------------------------------------------- */
 /*                                Info
 /* ------------------------------------------------------------------- */
 
-export const title = 'Gentool';
-export const version = 'v0.1.0';
+export const title = capitalize(pack.name);
+export const version = `v${pack.version}`;
 
 /* ------------------------------------------------------------------- */
 /*                             Directories

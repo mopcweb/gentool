@@ -1,7 +1,7 @@
 {
   "name": "gentool",
-  "version": "0.1.0",
-  "description": "tool for easy starter of common ts-node-express app",
+  "version": "0.1.1",
+  "description": "Tool for easy starter of common ts server/client/fullstack project or service",
   "main": "server/index.js",
   "scripts": {
     "lint": "tslint -p tsconfig.json --exclude **/client/**",
@@ -16,7 +16,9 @@
   },
   "keywords": [
     "Gentool",
-    "Starter"
+    "Starter",
+    "Server",
+    "Typescript"
   ],
   "author": "Danyil Moroz",
   "license": "MIT",
@@ -36,5 +38,10 @@
     "tslint": "^5.18.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mopcweb/gentool"
+  },
+  "homepage": "https://github.com/mopcweb/gentool"
 }
