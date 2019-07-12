@@ -1,8 +1,6 @@
 # Gen Tool Starter
 
-## NOTE
-
-Tool works, but note that documentation as well as code are still under construction.
+[![GitHub version](https://img.shields.io/badge/version-0.1.0-yellow.svg)](https://github.com/mopcweb/gentool/releases) [![npm version](https://img.shields.io/npm/v/gentool.svg)](https://www.npmjs.com/package/gentool) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mopcweb/gentool/blob/master/LICENSE)
 
 ## Description
 
@@ -14,8 +12,8 @@ Plans for future:
 
  - [ ] Provide templates in JavaScript
  - [ ] Provide ability to choose React for client-side projects (with / without Redux)
- - [ ] Replace copying logic from using shell cmd to use javascript: to be cross-platform
  - [ ] Adding PostgreSQL / MySQL database options for server templates
+ - [ ] Add AWS sign-in template
 
 ## Usage
 

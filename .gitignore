@@ -7,6 +7,12 @@ node_modules
 ### server js
 src/**/server/**/*.js
 src/**/server/**/*.map.js
+src/services/**/*.js
+src/services/**/*.map.js
+src/utils/**/*.js
+src/utils/**/*.map.js
+src/**/*.js
+src/**/*.map.js
 
 ### IDE - VSCode
 .vscode/*
