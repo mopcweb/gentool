@@ -76,13 +76,13 @@ export class ConfigService {
     // Update config
     this.config = {
       creds: {
-        clientId: '58om4ok3c8bf8u4olng3n64s1c',
-        clientSecret: '1c544um65mpchkvvueb3c32vfjliav9nm2kra3rt6i8lrrchlpk0',
-        client: 'signet_office',
-        app: '58om4ok3c8bf8u4olng3n64s1c',
-        instance: 'delve',
+        clientId: 'clientId',
+        clientSecret: 'clientSecret',
+        client: 'client',
+        app: 'app',
+        instance: 'instance',
       },
-      profile: 'nrieger@signet.tv',
+      profile: 'profile',
       instance: 'signet'
     };
 
@@ -102,13 +102,13 @@ export class ConfigService {
     // Update config
     this.config = {
       creds: {
-        clientId: '58om4ok3c8bf8u4olng3n64s1c',
-        clientSecret: '1c544um65mpchkvvueb3c32vfjliav9nm2kra3rt6i8lrrchlpk0',
-        client: 'signet',
-        app: '58om4ok3c8bf8u4olng3n64s1c',
-        instance: 'widget',
+        clientId: 'clientId',
+        clientSecret: 'clientSecret',
+        client: 'client',
+        app: 'app',
+        instance: 'instance',
       },
-      profile: 'andrii.hordiichuk@essention.com.ua',
+      profile: 'profile',
       instance: 'dev'
     };
 

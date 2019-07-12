@@ -11,8 +11,8 @@ src/services/**/*.js
 src/services/**/*.map.js
 src/utils/**/*.js
 src/utils/**/*.map.js
-src/**/*.js
-src/**/*.map.js
+src/index.js
+src/index.map.js
 
 ### IDE - VSCode
 .vscode/*
