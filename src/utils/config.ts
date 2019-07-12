@@ -5,22 +5,18 @@
 /* ################################################################### */
 
 import * as path from 'path';
-/* tslint:disable */
-const pack = require('../../package.json');
-/* tslint:enable */
 
 /* ------------------------------------------------------------------- */
 /*                              Helpers
 /* ------------------------------------------------------------------- */
 
-import { dirsArray, capitalize } from '../services';
+import { dirsArray, parsePackage } from '../services';
 
 /* ------------------------------------------------------------------- */
 /*                                Info
 /* ------------------------------------------------------------------- */
 
-export const title = capitalize(pack.name);
-export const version = `v${pack.version}`;
+export const { title, version } = parsePackage();
 
 /* ------------------------------------------------------------------- */
 /*                             Directories

@@ -1,14 +1,15 @@
 {
   "name": "gentool",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tool for easy starter of common ts server/client/fullstack project or service",
   "main": "server/index.js",
   "scripts": {
     "lint": "tslint -p tsconfig.json --exclude **/client/**",
+    "update": "ts-node updateReadme.ts",
     "dev:node": "ts-node src/index.ts",
     "dev:demon": "nodemon --config nodemon.json",
     "copy": "cp -r src/docker lib && cp -r src/templates lib",
-    "build": "npm run lint && tsc -p tsconfig.json && npm run copy",
+    "build": "npm run lint && npm run update && tsc -p tsconfig.json && npm run copy",
     "release": "npm run build && npm publish"
   },
   "bin": {

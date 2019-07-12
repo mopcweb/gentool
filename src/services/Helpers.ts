@@ -4,10 +4,30 @@
 /*
 /* ################################################################### */
 
+import * as path from 'path';
 import * as fs from 'fs';
 
 /* ------------------------------------------------------------------- */
-/*                              Capitalize
+/*                          Parse package.json
+/* ------------------------------------------------------------------- */
+
+export const parsePackage = (letter = true) => {
+  // Read file
+  const file =
+    fs.readFileSync(path.join(__dirname, '../..', 'package.json'), 'utf-8');
+
+  // Parse JSON
+  const parsed = JSON.parse(file);
+
+  // Return
+  return {
+    title: capitalize(parsed.name),
+    version: letter ? `v${parsed.version}` : parsed.version
+  };
+};
+
+/* ------------------------------------------------------------------- */
+/*                            Capitalize
 /* ------------------------------------------------------------------- */
 
 export const capitalize = (str: string) =>
