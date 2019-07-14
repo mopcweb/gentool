@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  basic-server:
+    build: ./
+    container_name: basic-server
+    restart: unless-stopped:0
+    links:
+      - redis:redis
+    environment:
+      - REDIS_URL=redis://redis:6301
+      - REDIS_PWD=redisPassw0rd42t34t4gr
+    ports:
+      - "4201:4201"
+    command:
+      sh -c 'npm i && npm run prod'
+    expose:
+      - 4201
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  redis:
+    image: redis:alpine
+    container_name: basic-server-redis
+    restart: unless-stopped:0
+    command: redis-server --port 6301 --requirepass redisPassw0rd42t34t4gr
+    expose:
+      - 6301
+    ports:
+      - "6301:6301"

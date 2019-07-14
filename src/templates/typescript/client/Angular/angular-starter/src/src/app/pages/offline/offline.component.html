@@ -1,0 +1,30 @@
+<div class="Offline">
+  <mat-card class="Card">
+
+    <!---------------------------------------------------------------------->
+    <!--                          Card Header
+    <!---------------------------------------------------------------------->
+
+    <mat-card-header>
+      <mat-card-title>Oops, you're offline :(</mat-card-title>
+      <mat-card-subtitle>Sorry</mat-card-subtitle>
+    </mat-card-header>
+
+    <!---------------------------------------------------------------------->
+    <!--                          Card Content
+    <!---------------------------------------------------------------------->
+
+    <mat-card-content>
+      <p>It looks like you lost your Internet connection :(</p>
+      <p>Please, try check it.</p>
+    </mat-card-content>
+
+    <!---------------------------------------------------------------------->
+    <!--                          Card Actions
+    <!---------------------------------------------------------------------->
+
+    <mat-card-actions>
+      <button mat-stroked-button (click)="handleOffline()">Check it</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

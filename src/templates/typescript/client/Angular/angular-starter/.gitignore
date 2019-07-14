@@ -1,0 +1,23 @@
+### Compiled output
+dist
+/build
+/tmp
+/out-tsc
+
+### Dependencies
+node_modules
+
+### IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+### Logs
+*.log
+
+### System Files
+.DS_Store
+Thumbs.db

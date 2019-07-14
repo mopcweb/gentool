@@ -1,0 +1,14 @@
+<div [ngClass]="{ 'Loader': true, 'Loader_spinner': type === 'spinner' }" *ngIf='show'>
+  <mat-spinner
+    *ngIf="type === 'spinner'"
+    class="Loader-Spinner"
+    color="accent"
+    strokeWidth="10">
+  </mat-spinner>
+  <mat-progress-bar
+    *ngIf="type === 'progress'"
+    class="Loader-Progress"
+    mode="indeterminate"
+    color="accent">
+  </mat-progress-bar>
+</div>

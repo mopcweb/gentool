@@ -1,0 +1,40 @@
+/* ------------------------------------------------------------------- */
+/*                            Variables
+/* ------------------------------------------------------------------- */
+
+@import '../../utils/variables'
+
+/* ------------------------------------------------------------------- */
+/*                              Header
+/* ------------------------------------------------------------------- */
+
+.Header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  overflow: hidden
+  background-color: $dark
+  color: $light
+
+  &-Title
+    display: flex
+    align-items: center
+
+    button
+      margin-right: $spacing
+
+    @media screen and (max-width: 599px)
+      span
+        display: none
+
+  &-Date
+    display: flex
+    align-items: center
+    height: 100%
+
+  &-Delimeter
+    margin: 0 $spacing * 2
+    display: block
+    width: 2px
+    height: 50%
+    background-color: $light
