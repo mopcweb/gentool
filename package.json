@@ -1,46 +1,49 @@
 {
   "name": "gentool",
-  "version": "0.1.0",
-  "description": "tool for easy starter of common ts-node-express app",
-  "main": "server/index.js",
+  "version": "0.1.9",
+  "description": "Tool for easy starter of common ts server/client/fullstack project or service",
+  "main": "lib/index.js",
   "scripts": {
-    "env": "ts-node env.ts",
-    "lint": "tslint -p tsconfig.json",
-    "client": "npm run env && cd client && npm start",
-    "server": "nodemon --config nodemon.json",
-    "dev": "concurrently --kill-others-on-fail \"npm run client\" \"npm run server\"",
-    "build:server": "npm run lint && tsc server/index.ts",
-    "build:client": "npm run lint && npm run env && cd client && npm run build",
-    "build": "npm run build:server && npm run build:client",
-    "start": "node server",
-    "prod": "npm run build && npm start"
+    "lint": "tslint -p tsconfig.json --exclude **/client/**",
+    "update": "ts-node updateReadme.ts",
+    "dev:node": "ts-node src/index.ts",
+    "dev:demon": "nodemon --config nodemon.json",
+    "copy": "cp -r src/docker lib && cp -r src/templates lib",
+    "build": "npm run lint && rm -rf lib && npm run update && tsc -p tsconfig.json && npm run copy",
+    "release": "npm run build && npm publish"
   },
+  "bin": {
+    "gentool": "./lib/index.js"
+  },
+  "files": [ "lib" ],
   "keywords": [
     "Gentool",
-    "Starter"
+    "Starter",
+    "Server",
+    "Typescript"
   ],
   "author": "Danyil Moroz",
   "license": "MIT",
   "dependencies": {
-    "@types/dotenv": "^6.1.1",
-    "@types/node": "^12.0.10",
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
-    "cli-table3": "^0.5.1",
-    "clui": "^0.3.6",
-    "configstore": "^5.0.0",
-    "dotenv": "^8.0.0",
     "figlet": "^1.2.3",
     "inquirer": "^6.4.1",
-    "lodash": "^4.17.11",
-    "minimist": "^1.2.0",
-    "touch": "^3.1.0",
+    "ncp": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.2.0",
+    "@types/inquirer": "^6.0.3",
+    "@types/ncp": "^2.0.1",
+    "@types/node": "^12.0.10",
+    "nodemon": "^1.19.1",
+    "tslint": "^5.18.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.2"
   },
-  "devDependencies": {
-    "concurrently": "^4.1.1",
-    "nodemon": "^1.19.1",
-    "tslint": "^5.18.0"
-  }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mopcweb/gentool"
+  },
+  "homepage": "https://github.com/mopcweb/gentool"
 }

@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  basic-server:
+    build: ./
+    container_name: basic-server
+    restart: unless-stopped:0
+    ports:
+      - "4201:4201"
+    command:
+      sh -c 'npm i && npm run prod'
+    expose:
+      - 4201
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"

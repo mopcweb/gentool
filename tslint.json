@@ -57,7 +57,7 @@
   "rulesDirectory": [],
   "linterOptions": {
     "exclude": [
-      "client"
+      "**/client/**"
     ]
   }
 }
