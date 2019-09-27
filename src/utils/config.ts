@@ -31,6 +31,12 @@ export const langsDir = path.join(__dirname, '../templates');
 // =====> Docker files
 export const dockerDir = path.join(__dirname, '../docker');
 
+// =====> Env dir
+export const envDir = path.join(__dirname, '../env');
+
+// =====> Shell scripts dir
+export const scriptsDir = path.join(__dirname, '../scripts');
+
 /* ------------------------------------------------------------------- */
 /*                           Directories lists
 /* ------------------------------------------------------------------- */
@@ -44,21 +50,29 @@ export const tsTemplates = dirsArray(`${langsDir}/typescript`);
 
 // =====> Client templates
 export const tsClientFrameworks = dirsArray(`${langsDir}/typescript/client`);
-// export const jsClientFrameworks = dirsArray(`${templatesDir}/javascript/client`);
+// export const jsClientFrameworks =
+//   dirsArray(`${templatesDir}/javascript/client`);
 
 // =====> Angular templates
-export const tsAngularTemplates = dirsArray(`${langsDir}/typescript/client/Angular`);
+export const tsAngularTemplates =
+  dirsArray(`${langsDir}/typescript/client/Angular`);
 
 // =====> Angular templates
-export const tsReactTemplates = dirsArray(`${langsDir}/typescript/client/React`);
-// export const jsReactTemplates = dirsArray(`${templatesDir}/javascript/client/React`);
+export const tsReactTemplates =
+  dirsArray(`${langsDir}/typescript/client/React`);
+// export const jsReactTemplates =
+//   dirsArray(`${templatesDir}/javascript/client/React`);
 
 // =====> Fullstack templates
-export const tsFullstackTemplates = dirsArray(`${langsDir}/typescript/fullstack`);
-// export const jsFullstackTemplates = dirsArray(`${templatesDir}/javascript/fullstack`);
+export const tsFullstackTemplates =
+  dirsArray(`${langsDir}/typescript/fullstack`);
+// export const jsFullstackTemplates =
+//   dirsArray(`${templatesDir}/javascript/fullstack`);
 
 /* ------------------------------------------------------------------- */
-/*                            Question Titles
+/**
+ *  Question Titles
+ */
 /* ------------------------------------------------------------------- */
 
 export const questionTitles = {
@@ -76,3 +90,33 @@ export const questionTitles = {
   router: 'project-router',
   title: 'project-title',
 };
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Env.sh Readme
+ */
+/* ------------------------------------------------------------------- */
+
+export const envShReadme =
+  '## env.sh \n\n' +
+  'This script parses env directory to use appropriate environment vars \n' +
+  'Accepts 1 argument, which is instance title \n\n' +
+  'Example: \n\n' +
+  '\`\`\`bash \n' +
+  '. ./env.sh stage \n' +
+  '\`\`\` \n';
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Run.sh Readme
+ */
+/* ------------------------------------------------------------------- */
+
+export const runShReadme =
+  '## run.sh \n\n' +
+  'This script parses launches docker-composes in project \n' +
+  'Shares 2 methods: all -> launch all; logs -> shows logs \n\n' +
+  'Example: \n\n' +
+  '\`\`\`bash \n' +
+  '. ./run.sh all \n' +
+  '\`\`\` \n';

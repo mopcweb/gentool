@@ -4,6 +4,7 @@
 /*
 /* ################################################################### */
 
+import * as fs from 'fs';
 import { promisify } from 'util';
 import * as inquirer from 'inquirer';
 import { ncp } from 'ncp';
@@ -17,11 +18,12 @@ const ncpAsync = promisify(ncp);
 
 // =====> Config
 import {
-  dir, questionTitles, langsDir, dockerDir
+  dir, questionTitles, langsDir, dockerDir, envDir, scriptsDir,
+  envShReadme, runShReadme
 } from '../utils/config';
 
 // =====> Services
-import { questions, dirsObject as options, rename } from './';
+import { questions, dirsObject as options, finish } from './';
 
 /* ------------------------------------------------------------------- */
 /*                            Ask in console
@@ -69,8 +71,7 @@ const createClient = async (answers: inquirer.Answers) => {
   // Copy template
   await copy(template, project);
 
-  // Rename
-  rename(project);
+  finish(project);
 };
 
 /* ------------------------------------------------------------------- */
@@ -102,14 +103,26 @@ const createServer = async (answers: inquirer.Answers) => {
   // Copy template
   await copy(template, project);
 
-  // Rename
-  rename(project);
-
   // Add docker
   if (docker === 'Yes')
     root === 'Project'
       ? addDocker(project + '/src', redis, db)
       : addDocker(project, redis, db);
+
+  // If it is Project > add env dir and env.sh
+  if (root === 'Project') {
+    await copy(envDir, `${project}/env`);
+    await copy(`${scriptsDir}/env.sh`, `${project}/env.sh`);
+    fs.appendFileSync(`${project}/Readme.md`, envShReadme);
+
+    // If docker -> add run.sh
+    if (docker === 'Yes') {
+      await copy(`${scriptsDir}/run.sh`, `${project}/run.sh`);
+      fs.appendFileSync(`${project}/Readme.md`, runShReadme);
+    }
+  }
+
+  finish(project);
 };
 
 /* ------------------------------------------------------------------- */
@@ -139,8 +152,7 @@ const createFullstack = async (answers: inquirer.Answers) => {
   // Copy template
   await copy(template, project);
 
-  // Rename
-  rename(project);
+  finish(project);
 };
 
 /* ------------------------------------------------------------------- */
@@ -149,9 +161,8 @@ const createFullstack = async (answers: inquirer.Answers) => {
 
 const copy = async (oldPath: string, newPath: string) =>
   ncpAsync(oldPath, newPath)
-    .then(() =>
-      console.log('Project setted up. Please install necessary dependencies and run'))
-    .catch(err => console.log('Error copying new project. Please try again', err));
+    .catch(err =>
+        console.log('Error copying new project. Please try again', err));
 
 /* ------------------------------------------------------------------- */
 /*                          Add Redis / MongoDB
@@ -195,5 +206,6 @@ const addDocker = (path: string, redis: string, db: string) => {
 
   // Copy docker files
   ncpAsync(dockerOption, path)
-    .catch(err => console.log('Error copying docker files. Please try again', err));
+    .catch(err =>
+        console.log('Error copying docker files. Please try again', err));
 };

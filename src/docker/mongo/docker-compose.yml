@@ -14,11 +14,11 @@ services:
       - MONGO_PWD=rootPass2ab4e199
       - MONGO_AUTH_SOURCE=admin
     ports:
-      - "4201:4201"
+      - "3001:3001"
     command:
       sh -c 'npm i && npm run prod'
     expose:
-      - 4201
+      - 3001
     logging:
       driver: "json-file"
       options:

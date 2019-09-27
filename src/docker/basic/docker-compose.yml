@@ -6,11 +6,11 @@ services:
     container_name: basic-server
     restart: unless-stopped:0
     ports:
-      - "4201:4201"
+      - "3001:3001"
     command:
       sh -c 'npm i && npm run prod'
     expose:
-      - 4201
+      - 3001
     logging:
       driver: "json-file"
       options:

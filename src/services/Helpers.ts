@@ -8,7 +8,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 /* ------------------------------------------------------------------- */
-/*                          Parse package.json
+/**
+ *  Parse package.json
+ */
 /* ------------------------------------------------------------------- */
 
 export const parsePackage = (letter = true) => {
@@ -27,14 +29,18 @@ export const parsePackage = (letter = true) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                            Capitalize
+/**
+ *  Capitalize
+ */
 /* ------------------------------------------------------------------- */
 
 export const capitalize = (str: string) =>
   str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase();
 
 /* ------------------------------------------------------------------- */
-/*                 Read dirs using path. Ignore '.' dirs
+/**
+ *  Read dirs using path. Ignore '.' dirs
+ */
 /* ------------------------------------------------------------------- */
 
 export const dirsArray = (dir: string) => {
@@ -53,7 +59,9 @@ export const dirsArray = (dir: string) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                           Templates options
+/**
+ *  Templates options
+ */
 /* ------------------------------------------------------------------- */
 
 export const dirsObject = (dir: string) => {
@@ -75,7 +83,9 @@ export const dirsObject = (dir: string) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                   Rename .npmignore to .gitignore
+/**
+ *  Rename .npmignore to .gitignore, due to npm bug
+ */
 /* ------------------------------------------------------------------- */
 
 export const rename = (dir: string, fileList: any[] = []) => {
@@ -95,4 +105,20 @@ export const rename = (dir: string, fileList: any[] = []) => {
   });
 
   return fileList;
+};
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Finish project creation
+ */
+/* ------------------------------------------------------------------- */
+
+export const finish = (dir: string) => {
+  // Rename '.npmignore' -> '.gitignore'
+  rename(dir);
+
+  // Console
+  console.log(
+    'Project setted up. Please install necessary dependencies and run'
+  );
 };

@@ -11,11 +11,11 @@ services:
       - REDIS_URL=redis://redis:6301
       - REDIS_PWD=redisPassw0rd42t34t4gr
     ports:
-      - "4201:4201"
+      - "3001:3001"
     command:
       sh -c 'npm i && npm run prod'
     expose:
-      - 4201
+      - 3001
     logging:
       driver: "json-file"
       options:
