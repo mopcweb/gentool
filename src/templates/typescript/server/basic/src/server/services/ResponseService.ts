@@ -47,10 +47,10 @@ export const msg = (
   if (params && !isEmpty(params))
     response.params = params;
 
-  if (!data && data !== false && data !== 0)
-    response.data = (statusCodes as any)[status];
-  else if (data === false || data === 0)
+  if (data === false || data === 0 || data === '')
     response.data = data;
+  else if (!data)
+    response.data = (statusCodes as any)[status];
   else if (data && typeof data === 'object' && !isEmpty(data))
     response.data = data;
   else if (data && typeof data !== 'object')

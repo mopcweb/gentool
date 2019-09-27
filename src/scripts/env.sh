@@ -51,7 +51,6 @@ export LAUNCH_BRANCH=`git branch | grep \* | cut -d ' ' -f2`
 #----------------------------------------------------------------------#
 #                            Escape Meta symbols
 #----------------------------------------------------------------------#
-#
 
 escapeMetaSymbols() {
   echo $1 | sed 's/ /\\ /g' | sed -e 's/(/\\(/g' | sed -e 's/)/\\)/g' | sed -e 's/\]/\\]/g' | sed -e 's/\[/\\[/g'
@@ -65,7 +64,7 @@ goToDir() {
   if [ -d "$root/env/$instance" ]
   then
     # Show
-    echo '   CHOOSEN INSTANSE:' $root/env/$instance
+    echo '   CHOOSEN INSTANSE:' "$instance"
     echo ""
     echo "  ----------------------------------------------------"
     echo ""
@@ -134,7 +133,7 @@ copy() {
         oldEnv=$( escapeMetaSymbols `cat "$2" | grep -e "^$var\b"` )
 #
         # If there is such var in both files
-        if [ "$newEnv" != "$oldEnv" ]
+        if [ "$newEnv" != "$oldEnv" ] && [ -n "$oldEnv" ]
         then
           echo "  > FROM: $oldEnv"
           echo "  > TO: $newEnv"

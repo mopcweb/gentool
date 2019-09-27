@@ -49,11 +49,15 @@ export const removeParams = (url: string): string => url.replace(/\?.*/gi, '');
 export const parseTypes = (data: any) => {
   let result: any = { };
 
+  // Parse null
+  if (data === null)
+    result = null;
+
   // Parse string
-  if (typeof data === 'string')
-    if (data === 'true')
+  else if (typeof data === 'string')
+    if (data.toLowerCase() === 'true')
       result = true;
-    else if (data === 'false')
+    else if (data.toLowerCase() === 'false')
       result = false;
     else if (!isNaN(+data))
       result = +data;
