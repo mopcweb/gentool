@@ -7,8 +7,11 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import * as swaggerUI from 'swagger-ui-express';
 
-// =====> Create Router instance
+/**
+ *  App routes
+ */
 const router = express.Router();
 
 /* ------------------------------------------------------------------- */
@@ -19,7 +22,7 @@ const router = express.Router();
 import { routes } from '../utils/routes';
 
 // =====> Middlewares
-import { checkMethod, setHeaders } from '../middlewares';
+import { checkMethod, setHeaders, parseRequest } from '../middlewares';
 
 /* ------------------------------------------------------------------- */
 /*                           Use middlewares
@@ -36,35 +39,36 @@ router.use(cors());
 /*                         Custom middlewares
 /* ------------------------------------------------------------------- */
 
-// =====> Config app
+router.use(parseRequest);
 router.use(setHeaders);
-
-// =====> Check if there is a method provided for requested resource
 router.use(checkMethod);
 
 /* ------------------------------------------------------------------- */
 /*                            Import routes
 /* ------------------------------------------------------------------- */
 
-import cache from './cache';
 import health from './health';
 import info from './info';
+import swagger from './swagger';
+import cache from './cache';
 import error from './error';
 
 /* ------------------------------------------------------------------- */
 /*                          Implement routes
 /* ------------------------------------------------------------------- */
 
-// =====> Check if server is up for AWS
+/* *************** EXTERNAL UNPROTECTED API ENDPOINTS ************** */
+
 router.use(routes.HEALTH.endPoint, health);
 
-// =====> Server info
 router.use(routes.INFO.endPoint, info);
 
-// =====> Server cache
+router.use(routes.SWAGGER.endPoint, swaggerUI.serve, swagger);
+
 router.use(routes.CACHE.endPoint, cache);
 
-// =====> Error requests handling
+/* ************************* ERROR REQUESTS ************************** */
+
 router.use('/', error);
 
 /* ------------------------------------------------------------------- */

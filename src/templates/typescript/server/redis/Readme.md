@@ -1,11 +1,16 @@
-# GenTool Server Starter
+# GenTool: Basic Typescript Server with RedisDB
+
+## Notes
+
+Do not forget to launch RedisDB at port, specified in .env (default: 6301)
+with necessary / without password
 
 ## Develop
 
 Been in root project directory
 
 ```bash
-# Go to src
+# Go to src (if there is 'src' dir)
 cd src
 
 # Install dependencies (if not installed yet)
@@ -17,21 +22,27 @@ npm run dev
 
 ## Build
 
-Been in root project folder (UI directory)
+Been in root project folder
 
 ```bash
+# Go to src (if there is 'src' dir)
+cd src
+
 # Install dependencies (if not installed yet)
 npm i
 
-# To build both server and UI
+# To build
 npm run build
 ```
 
 ## Production
 
-Been in root project folder (UI directory)
+Been in root project folder
 
 ```bash
+# Go to src (if there is 'src' dir)
+cd src
+
 # Install dependencies (if not installed yet)
 npm i
 

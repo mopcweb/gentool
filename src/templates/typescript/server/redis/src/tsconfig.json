@@ -6,14 +6,18 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "outDir": "dist",
     "baseUrl": ".",
     "paths": {
       "*": [
         "node_modules/*",
-        "app/types/*"
+        "server/*"
       ]
     }
   },
+  "files": [
+    "server/index.ts"
+  ],
   "exclude": [
     "node_modules"
   ]

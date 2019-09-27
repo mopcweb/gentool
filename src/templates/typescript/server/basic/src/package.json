@@ -1,7 +1,7 @@
 {
-  "name": "gentool",
+  "name": "basic_server",
   "version": "0.1.0",
-  "description": "tool for easy starter of common server",
+  "description": "Basic Typescript Server",
   "main": "server/index.js",
   "scripts": {
     "lint": "tslint -p tsconfig.json",

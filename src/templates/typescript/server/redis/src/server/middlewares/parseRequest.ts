@@ -10,28 +10,21 @@ import { Request, Response, NextFunction } from 'express';
 /*                               Config
 /* ------------------------------------------------------------------- */
 
-import { methods } from '../utils/routes';
+import { parseTypes } from '../services';
 
 /* ------------------------------------------------------------------- */
 /**
- *  Sets headers
+ *  Parses request: query, params, body & headers and corrects data types
  */
 /* ------------------------------------------------------------------- */
 
-export const setHeaders = (
+export const parseRequest = (
   req: Request, res: Response, next: NextFunction
 ): Response | void => {
-  // Allow cross origin
-  res.header('Access-Control-Allow-Origin', '*');
-
-  // Allow methods
-  res.header('Access-Control-Allow-Methods', methods);
-
-  // Allow headers
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, Content-Length, X-Requested-With'
-  );
+  req.query = parseTypes(req.query);
+  req.params = parseTypes(req.params);
+  req.body = parseTypes(req.body);
+  req.headers = parseTypes(req.headers);
 
   // Pass further if everything is ok
   next();

@@ -6,7 +6,7 @@
 
 /* tslint:disable */
 
-import { api } from './config';
+import { API, ROUTES } from './config';
 
 /* ------------------------------------------------------------------- */
 /*                   Methods, which are implemented
@@ -20,15 +20,19 @@ export const methods = 'POST, GET, PUT, DELETE';
 
 export const routes = {
   HEALTH: {
-    endPoint: '/health.html',
+    endPoint: ROUTES.HEALTH,
     method: 'GET'
   },
   INFO: {
-    endPoint: api.info,
+    endPoint: API.INFO,
+    method: 'GET'
+  },
+  SWAGGER: {
+    endPoint: API.SWAGGER,
     method: 'GET'
   },
   CACHE: {
-    endPoint: api.cache,
+    endPoint: API.CACHE.ROOT,
     method: 'GET'
   }
 };

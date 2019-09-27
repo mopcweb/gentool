@@ -7,37 +7,67 @@
 
 import * as express from 'express';
 
-// =====> Create Router instance
+/**
+ *   Cache API
+ */
 const router = express.Router();
 
 /* ------------------------------------------------------------------- */
 /*                              Config
 /* ------------------------------------------------------------------- */
 
-// =====> StatusCodes
-import { OK } from 'http-status';
+// =====> Config
+import { API } from '../utils/config';
 
 // =====> Services
-import { send, removeParams, CacheService } from '../services';
+import { reply, CacheService } from '../services';
 
 /* ------------------------------------------------------------------- */
 /*                            GET: Clear
 /* ------------------------------------------------------------------- */
 
-router.get('/clear', async (req, res) => {
-  const { originalUrl, method, headers, query } = req;
-  const { referer } = headers;
-
-  // Response url
-  const responseUrl = removeParams(originalUrl);
-
+router.get(API.CACHE.CLEAR, async (req, res) => {
   // Clear cache
   await new CacheService().clearAll();
 
   // Send res
-  send(
-    res, OK, 'Cache cleared', responseUrl, method, referer, query
-  );
+  reply.ok(req, res, 'Cache cleared');
+});
+
+/* ------------------------------------------------------------------- */
+/*                          GET: Delete by key
+/* ------------------------------------------------------------------- */
+
+router.get('/delete/:key', async (req, res) => {
+  const { key } = req.params;
+
+  // Clear cache
+  const response = await new CacheService().del(key);
+
+  // If no response -> send error
+  if (!response)
+    reply.notFound(req, res);
+  else
+    reply.ok(req, res, `Deleted record by key: ${key}`);
+});
+
+/* ------------------------------------------------------------------- */
+/*                          GET: All or by key
+/* ------------------------------------------------------------------- */
+
+router.get('/:key?', async (req, res) => {
+  const { key } = req.params;
+
+  // Clear cache
+  const response = key
+    ? await new CacheService().get(key)
+    : await new CacheService().getAll();
+
+  // If no response -> send error
+  if (!response)
+    reply.notFound(req, res);
+  else
+    reply.ok(req, res, response);
 });
 
 /* ------------------------------------------------------------------- */

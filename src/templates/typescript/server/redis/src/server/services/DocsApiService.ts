@@ -9,10 +9,11 @@ import chalk from 'chalk';
 import * as Table from 'cli-table3';
 
 /* ------------------------------------------------------------------- */
-/*                              API Table
+/**
+ *  Shows in console/terminal table with API info
+ */
 /* ------------------------------------------------------------------- */
 
-// =====> Show in console/terminal API table
 export const showAPIDocs = (routes: any, title?: string, color?: string) => {
 
   // Define title and color for title
@@ -66,9 +67,13 @@ const colorizeString = (str: string) => {
   if (str.indexOf('PUT') !== -1)
     output ? output += `, ${chalk.cyan('PUT')}` : output += chalk.cyan('PUT');
   if (str.indexOf('DELETE') !== -1)
-    output ? output += `, ${chalk.red('DELETE')}` : output += chalk.red('DELETE');
+    output
+      ? output += `, ${chalk.red('DELETE')}`
+      : output += chalk.red('DELETE');
   if (str.indexOf('PATCH') !== -1)
-    output ? output += `, ${chalk.grey('PATCH')}` : output += chalk.cyan('PATCH');
+    output
+      ? output += `, ${chalk.grey('PATCH')}`
+      : output += chalk.cyan('PATCH');
 
   return output;
 };

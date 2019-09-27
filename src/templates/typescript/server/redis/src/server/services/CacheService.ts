@@ -15,13 +15,15 @@ import { promisify } from 'util';
 import { ICacheService } from '../interfaces';
 
 // =====> Config
-import { redisUrl, redisPwd } from '../utils/config';
+import { REDIS_URL, REDIS_PWD } from '../utils/config';
 
 // =====> Services
 import { logger } from '../services';
 
 /* ------------------------------------------------------------------- */
-/*                              Service
+/**
+ *  This Service is provided with purpose to cache data via RedisDB
+ */
 /* ------------------------------------------------------------------- */
 
 export class CacheService implements ICacheService {
@@ -30,8 +32,7 @@ export class CacheService implements ICacheService {
   /*                               Vars
   /* ------------------------------------------------------------------- */
 
-  public db: any;
-  public connection: number;
+  public db: redis.RedisClient;
 
   /* ------------------------------------------------------------------- */
   /*                            Constructor
@@ -39,24 +40,37 @@ export class CacheService implements ICacheService {
 
   public constructor() {
     // Create connection
-    this.db = redis.createClient(redisUrl, { password: redisPwd });
-
-    // Save connection id into sharable var
-    this.connection = this.db;
-
-    // Handle success connections
-    // this.db.on('connect', () =>
-      // logger.debug('CONNECTED', ['REDIS: STATUS', 'magenta']));
+    this.db = redis.createClient(REDIS_URL, { password: REDIS_PWD });
 
     // Handle error connections
     this.db.on('error', (err: any) => {
-      this.db.quit();
       logger.error(err, ['ERROR IN CACHE_SERVICE: REDIS ERROR']);
+      this.db.quit();
     });
+
+    // // On connection open
+    // this.db.on('ready', (err: any) =>
+    //   logger.debug('', ['REDIS: READY', 'magenta']));
+    //
+    // // On connection is idle
+    // this.db.on('idle', (err: any) => {
+    //   logger.warn('', ['REDIS: IDLE. SHUTTIN DOWN ...', 'magenta']);
+    //   this.db.quit();
+    // });
+    //
+    // // On connection end
+    // this.db.on('end', (err: any) =>
+    //   logger.warn('', ['REDIS: CLOSED', 'magenta']));
   }
 
   /* ------------------------------------------------------------------- */
-  /*                             Set cache
+  /**
+   *  Sets cache, Optionally with expiration
+   *
+   *  @param key - Key to set by
+   *  @param data - Data to store
+   *  @param [time] - Expiration time
+   */
   /* ------------------------------------------------------------------- */
 
   // Time - 10 (seconds) -> to prevent errors when smth found in cache
@@ -97,7 +111,11 @@ export class CacheService implements ICacheService {
   }
 
   /* ------------------------------------------------------------------- */
-  /*                             Get cache
+  /**
+   *  Gets data from cache by key
+   *
+   *  @param key - Key to get by
+   */
   /* ------------------------------------------------------------------- */
 
   public get = async (key: string) => {
@@ -123,7 +141,11 @@ export class CacheService implements ICacheService {
   }
 
   /* ------------------------------------------------------------------- */
-  /*                          Remove cache
+  /**
+   *  Removes data from cache by key
+   *
+   *  @param key - Key to delete by
+   */
   /* ------------------------------------------------------------------- */
 
   public del = async (key: string) => {
@@ -151,7 +173,46 @@ export class CacheService implements ICacheService {
   }
 
   /* ------------------------------------------------------------------- */
-  /*                          Clear all dbs
+  /**
+   *  Gets all cache keys. Optionally with ttl (time to expiration)
+   *
+   *  @param [ttl=true] - Whether to include ttl (time to expiration)
+   */
+  /* ------------------------------------------------------------------- */
+
+  public getAll = async (ttl = true) => {
+    // Var for result
+    let keys: any;
+    const response: any = [];
+
+    // Make Redis.get() an async function
+    const keysAsync: any = promisify(this.db.keys).bind(this.db);
+    const ttlAsync: any = promisify(this.db.ttl).bind(this.db);
+
+    // Get keys
+    await keysAsync('*')
+      .then((res: any) => keys = res)
+      .catch((err: any) =>
+        logger.error(err, ['ERROR IN CACHE_SERVICE: GET ALL']));
+
+    // Get ttl
+    for (const key of keys)
+      if (ttl)
+        await ttlAsync(key)
+          .then((ttl: any) => response.push({ key, ttl }) )
+          .catch((err: any) =>
+            logger.error(err, ['ERROR IN CACHE_SERVICE: GET TTL']));
+      else
+        response.push({ key });
+
+    // Return
+    return response;
+  }
+
+  /* ------------------------------------------------------------------- */
+  /**
+   *  Clears all dbs
+   */
   /* ------------------------------------------------------------------- */
 
   public clearAll = async () => {

@@ -5,8 +5,10 @@
 /* ################################################################### */
 
 /* tslint:disable */
+
 const { createLogger, transports } = require('winston');
 const { combine, simple, splat, printf } = require('winston').format;
+
 /* tslint:enable */
 
 import chalk from 'chalk';
@@ -15,9 +17,11 @@ import chalk from 'chalk';
 /*                                Config
 /* ------------------------------------------------------------------- */
 
-import {
-  logLevel as level, logSilent as silent
-} from '../utils/config';
+// =====> Config
+import { LOG_LEVEL as level, LOG_SILENT as silent } from '../utils/config';
+
+// =====> Intefaces
+import { ILogger } from '../interfaces';
 
 /* ------------------------------------------------------------------- */
 /*                  Custom format for winston logger
@@ -64,7 +68,9 @@ const myFormat = printf((props: any) => {
     type = defineColor(level, title);
 
   // Uncomment it to see default output
-  // return `${level}: ${typeof message === 'object' ? JSON.stringify(message) : message}`;
+  // return `${level}: ${typeof message === 'object'
+  //   ? JSON.stringify(message)
+  //   : message}`;
 
   // Show in console & return 'empty'
   console.log(type + '\n', message);
@@ -98,10 +104,12 @@ const defineColor = (level: string, title: string) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                  Create winston logger instance
+/**
+ *  Custom winston logger, for generating pretty logs over app
+ */
 /* ------------------------------------------------------------------- */
 
-export const logger = createLogger({
+export const logger: ILogger = createLogger({
   level,
   silent,
   format: combine(
