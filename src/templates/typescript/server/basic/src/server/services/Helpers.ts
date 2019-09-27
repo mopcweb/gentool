@@ -37,3 +37,73 @@ export const isEmpty = (obj: { [x: string]: any }): boolean => {
 /* ------------------------------------------------------------------- */
 
 export const removeParams = (url: string): string => url.replace(/\?.*/gi, '');
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Parses data and corrects types: from string to boolean | number
+ *
+ *  @param data - Data to parse
+ */
+/* ------------------------------------------------------------------- */
+
+export const parseTypes = (data: any) => {
+  let result: any = { };
+
+  // Parse string
+  if (typeof data === 'string')
+    if (data === 'true')
+      result = true;
+    else if (data === 'false')
+      result = false;
+    else if (!isNaN(+data))
+      result = +data;
+    else
+      result = data;
+
+  // Parse array
+  else if (Array.isArray(data))
+    result = data.map(item => parseTypes(item));
+
+  // Parse object
+  else if (typeof data === 'object')
+    for (const key of Object.keys(data))
+      result[key] = parseTypes(data[key]);
+
+  // Else
+  else
+    result = data;
+
+  return result;
+};
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Creates structure for data (specifically for swagger)
+ *
+ *  @param data - Original data object, for which there would
+ *  be created a structure
+ */
+/* ------------------------------------------------------------------- */
+
+export const createDataStructure = (data: any) => {
+  const structure: any = { };
+
+  if (data == null)
+    structure.type = 'string';
+  else if (typeof data === 'object' && data != null)
+    if (Array.isArray(data)) {
+      structure.type = 'array';
+      structure.items = createDataStructure(data[0]);
+    }
+    else {
+      structure.type = typeof data;
+      structure.properties = { };
+
+      for (const key of Object.keys(data))
+        structure.properties[key] = createDataStructure(data[key]);
+    }
+  else
+    structure.type = typeof data;
+
+  return structure;
+};

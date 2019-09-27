@@ -14,7 +14,7 @@ const app = express();
 /* ------------------------------------------------------------------- */
 
 // =====> Config
-import { port } from './utils/config';
+import { PORT } from './utils/config';
 
 // =====> Routes
 import { routes } from './utils/routes';
@@ -50,7 +50,7 @@ app.use('/', router);
 /*                              Listen
 /* ------------------------------------------------------------------- */
 
-app.listen(port, () => logger.verbose(
-  `🌎  BASIC SERVER is running on localhost:${port}`,
+app.listen(PORT, () => logger.verbose(
+  `🌎  BASIC SERVER is running on localhost:${PORT}`,
   ['BASIC SERVER STARTED']
 ));

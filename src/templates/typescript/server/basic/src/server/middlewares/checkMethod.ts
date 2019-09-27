@@ -13,31 +13,26 @@ import { Request, Response, NextFunction } from 'express';
 // =====> Routes
 import { methods, routes } from '../utils/routes';
 
-// =====> StatusCodes
-import * as statusCodes from 'http-status';
-
 // =====> Services
-import { send, removeParams } from '../services';
+import { reply, removeParams } from '../services';
 
 /* ------------------------------------------------------------------- */
-/*                             Middleware
+/**
+ *  Checks if there is a method provided for requested resource
+ */
 /* ------------------------------------------------------------------- */
 
 export const checkMethod = (
   req: Request, res: Response, next: NextFunction
 ): Response | void => {
-  const { originalUrl, method, headers, query } = req;
-  const { referer } = headers;
+  const { originalUrl, method } = req;
 
   // Remove params form url
   const url = removeParams(originalUrl);
 
   // Send response for methods, which are not implemented
   if (methods.indexOf(method) === -1)
-    return send(
-      res, statusCodes.NOT_IMPLEMENTED, statusCodes[501],
-      url, method, referer, query
-    );
+    return reply.notImplemented(req, res);
 
   // Iterate over each route in routes and define appropriate methods
   for (const key in routes) {
@@ -45,10 +40,7 @@ export const checkMethod = (
       continue;
 
     if ((routes as any)[key].method.indexOf(method) === -1)
-      return send(
-        res, statusCodes.METHOD_NOT_ALLOWED, (statusCodes as any)['405_MESSAGE'],
-        url, method, referer, query
-      );
+      return reply.notAllowed(req, res);
   }
 
   // Pass further if everything is ok

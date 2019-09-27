@@ -7,7 +7,9 @@
 
 import * as express from 'express';
 
-// =====> Create Router instance
+/**
+ *   Info API. Current server info
+ */
 const router = express.Router();
 
 /* ------------------------------------------------------------------- */
@@ -15,30 +17,24 @@ const router = express.Router();
 /* ------------------------------------------------------------------- */
 
 // =====> Config
-import { version, instance } from '../utils/config';
-
-// =====> StatusCodes
-import { OK } from 'http-status';
+import {
+  VERSION as version, INSTANCE as instance,
+  COMMIT as commit, DATE_TIME as dateTime
+} from '../utils/config';
 
 // =====> Services
-import { send, removeParams } from '../services';
+import { reply } from '../services';
 
 /* ------------------------------------------------------------------- */
 /*                                GET
 /* ------------------------------------------------------------------- */
 
 router.get('/', (req, res) => {
-  const { originalUrl, method, headers, query } = req;
-  const { referer } = headers;
-
-  // Response url
-  const responseUrl = removeParams(originalUrl);
-
   // Server info
-  const info = { instance, version };
+  const info = { instance, version, commit, dateTime };
 
   // Send res
-  send(res, OK, info, responseUrl, method, referer, query);
+  reply.ok(req, res, info);
 });
 
 /* ------------------------------------------------------------------- */

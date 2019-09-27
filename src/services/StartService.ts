@@ -8,7 +8,7 @@
 
 import chalk from 'chalk';
 import * as figlet from 'figlet';
-const clear  = require('clear');
+const clear = require('clear');
 
 /* tslint:enable */
 

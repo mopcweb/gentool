@@ -1,43 +1,33 @@
 /* ################################################################### */
 /*
-/*  This API is provided with purpose to provide explicit responses
-/*  for all error requests
+/*  This API is provided with purpose to provide API docs using Swagger
 /*
 /* ################################################################### */
 
 import * as express from 'express';
+import * as swaggerUI from 'swagger-ui-express';
+import swaggerJSDoc = require('swagger-jsdoc');
+import swaggerConfig from '../utils/swagger';
 
 /**
- *   Handles error requests
+ *   Swagger (API documentation) API
  */
 const router = express.Router();
 
 /* ------------------------------------------------------------------- */
-/*                              Config
+/*                    Specify swagger JSDoc options
 /* ------------------------------------------------------------------- */
 
-// =====> Routes
-import { routes as endPoints } from '../utils/routes';
-
-// =====> Services
-import { reply } from '../services';
+const options: any = {
+  swaggerDefinition: { ...swaggerConfig },
+  apis: []
+};
 
 /* ------------------------------------------------------------------- */
-/*                           Handle errors
+/*                                GET
 /* ------------------------------------------------------------------- */
 
-router.all('/*', (req, res) => {
-  // Response
-  /* tslint:disable */
-  const response = {
-    message: 'Consider using one of provided API endPoints',
-    endPoints
-  };
-  /* tslint:enable */
-
-  // Send res
-  reply.notFound(req, res, response);
-});
+router.get('*', swaggerUI.setup(swaggerJSDoc(options)));
 
 /* ------------------------------------------------------------------- */
 /*                              Export

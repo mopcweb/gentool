@@ -1,6 +1,6 @@
 {
   "name": "gentool",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Tool for easy starter of common ts server/client/fullstack project or service",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,9 @@
   "bin": {
     "gentool": "./lib/index.js"
   },
-  "files": [ "lib" ],
+  "files": [
+    "lib"
+  ],
   "keywords": [
     "Gentool",
     "Starter",
