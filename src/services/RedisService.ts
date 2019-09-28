@@ -9,7 +9,7 @@
 /* ------------------------------------------------------------------- */
 
 // ====> Config
-import { dir, optionsDirs } from '../utils/config';
+import { dir, optionsDirs as OD } from '../utils/config';
 
 // ====> Services
 import { read, insert, copy } from './';
@@ -56,11 +56,10 @@ export const packageJson = (path: string) => {
 export const copyFiles = async (path: string) => {
   const source = path + '/server';
 
-  console.log(' old >>>', optionsDirs.redis + filePaths.service);
-  console.log(' new >>>', source + filePaths.service);
-
   // Copy service
-  await copy(optionsDirs.redis + filePaths.service, source + filePaths.service);
+  await copy(OD.redis + filePaths.service, source + filePaths.service);
+  await copy(OD.redis + filePaths.interface, source + filePaths.interface);
+  await copy(OD.redis + filePaths.service, source + filePaths.service);
 };
 
 /* ------------------------------------------------------------------- */
@@ -68,10 +67,9 @@ export const copyFiles = async (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const filePaths = {
-  interface: dir + '/src/options/redis/interfaces/ICacheService.ts',
-  // service: dir + '/src/options/redis/services/CacheService.ts',
+  interface: '/interfaces',
   service: '/services',
-  redisKeys: dir + '/src/options/redis/utils/redisKeys.ts'
+  redisKeys: '/utils/redisKeys.ts'
 };
 
 /* ------------------------------------------------------------------- */
