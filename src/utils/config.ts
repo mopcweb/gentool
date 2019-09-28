@@ -10,7 +10,7 @@ import * as path from 'path';
 /*                              Helpers
 /* ------------------------------------------------------------------- */
 
-import { dirsArray, parsePackage } from '../services';
+import { dirsArray, parsePackage } from '../services/Helpers';
 
 /* ------------------------------------------------------------------- */
 /*                                Info
@@ -36,6 +36,11 @@ export const envDir = path.join(__dirname, '../env');
 
 // =====> Shell scripts dir
 export const scriptsDir = path.join(__dirname, '../scripts');
+
+// =====> Options dir
+export const optionsDirs = {
+  redis: path.join(__dirname, '../options/redis')
+};
 
 /* ------------------------------------------------------------------- */
 /*                           Directories lists

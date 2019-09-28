@@ -4,9 +4,7 @@
 /*
 /* ################################################################### */
 
+export * from './DocsApiService';
 export * from './Helpers';
-export * from './ParserService';
-export * from './ProjectService';
-export * from './QuestionsService';
-export * from './RedisService';
-export * from './StartService';
+export * from './LoggerService';
+export * from './ResponseService';

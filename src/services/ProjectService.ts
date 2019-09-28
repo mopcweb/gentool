@@ -1,6 +1,6 @@
 /* ################################################################### */
 /*
-/*  Service which put questions into console and creates project
+/*  Service which puts questions into console and creates project
 /*
 /* ################################################################### */
 

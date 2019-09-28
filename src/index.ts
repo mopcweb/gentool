@@ -10,13 +10,20 @@
 /*                               Config
 /* ------------------------------------------------------------------- */
 
+// =====> Config
+import { dir } from './utils/config';
+
 // =====> Services
-import { prompt, start } from './services';
+import { prompt, start, env, packageJson, copyFiles } from './services';
 
 /* ------------------------------------------------------------------- */
 /*                               Init
 /* ------------------------------------------------------------------- */
 
-start();
+// env(dir + '/basic/src');
+// packageJson(dir + '/basic/src');
+copyFiles(dir + '/basic/src');
 
-prompt();
+// start();
+
+// prompt();
