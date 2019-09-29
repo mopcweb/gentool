@@ -18,12 +18,14 @@ const ncpAsync = promisify(ncp);
 
 // =====> Config
 import {
-  dir, questionTitles, langsDir, dockerDir, envDir, scriptsDir,
-  envShReadme, runShReadme
+  dir, questionTitles, langsDir, envShReadme, runShReadme, optionsDir
 } from '../utils/config';
 
 // =====> Services
-import { questions, dirsObject as options, finish } from './';
+import {
+  questions, dirsObject as options, finish, addRedis, copy, insert,
+  isExists
+} from './';
 
 /* ------------------------------------------------------------------- */
 /*                            Ask in console
@@ -75,7 +77,11 @@ const createClient = async (answers: inquirer.Answers) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                            Create server
+/**
+ *  Creates basic server and adds chosen options
+ *
+ *  @param answers - Quiz answers
+ */
 /* ------------------------------------------------------------------- */
 
 const createServer = async (answers: inquirer.Answers) => {
@@ -92,10 +98,10 @@ const createServer = async (answers: inquirer.Answers) => {
   if (choice !== 'server')
     return;
 
-  // Choose basic template
+  // Choose basic server path
   const template = root === 'Project'
-    ? addDbs(`${langsDir}/${lang}/${choice}`, redis, db)
-    : addDbs(`${langsDir}/${lang}/${choice}`, redis, db) + '/src';
+    ? `${langsDir}/${lang}/${choice}/basic`
+    : `${langsDir}/${lang}/${choice}/basic/src`;
 
   // Create new project path
   const project = `${dir}/${title}`;
@@ -103,24 +109,14 @@ const createServer = async (answers: inquirer.Answers) => {
   // Copy template
   await copy(template, project);
 
-  // Add docker
   if (docker === 'Yes')
-    root === 'Project'
-      ? addDocker(project + '/src', redis, db)
-      : addDocker(project, redis, db);
+    await addDocker(project);
 
-  // If it is Project > add env dir and env.sh
-  if (root === 'Project') {
-    await copy(envDir, `${project}/env`);
-    await copy(`${scriptsDir}/env.sh`, `${project}/env.sh`);
-    fs.appendFileSync(`${project}/Readme.md`, envShReadme);
+  if (redis === 'Yes')
+    await addRedis(project);
 
-    // If docker -> add run.sh
-    if (docker === 'Yes') {
-      await copy(`${scriptsDir}/run.sh`, `${project}/run.sh`);
-      fs.appendFileSync(`${project}/Readme.md`, runShReadme);
-    }
-  }
+  if (root === 'Project')
+    await addScripts(project, docker);
 
   finish(project);
 };
@@ -156,56 +152,76 @@ const createFullstack = async (answers: inquirer.Answers) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                            Copy template
-/* ------------------------------------------------------------------- */
-
-const copy = async (oldPath: string, newPath: string) =>
-  ncpAsync(oldPath, newPath)
-    .catch(err =>
-        console.log('Error copying new project. Please try again', err));
-
-/* ------------------------------------------------------------------- */
 /*                          Add Redis / MongoDB
 /* ------------------------------------------------------------------- */
 
-const addDbs = (path: string, redis: string, db: string) => {
-  // Choose basic template
-  let template = options(path).basic;
+// const addDbs = (path: string, redis: string, db: string) => {
+//   // Choose basic template
+//   let template = options(path).basic;
+//
+//   // Choose redis template
+//   if (redis === 'Yes' && db === 'None')
+//     template = options(path).redis;
+//
+//   // Choose mongo template
+//   if (db === 'MongoDB' && redis === 'No')
+//     template = options(path).mongo;
+//
+//   // Choose redis + mongo template
+//   if (redis === 'Yes' && db === 'MongoDB')
+//     template = options(path).redis_mongo;
+//
+//   // Return
+//   return template;
+// };
 
-  // Choose redis template
-  if (redis === 'Yes' && db === 'None')
-    template = options(path).redis;
+/* ------------------------------------------------------------------- */
+/**
+ *  Adds Docker
+ *
+ *  @param path - Project path
+ */
+/* ------------------------------------------------------------------- */
 
-  // Choose mongo template
-  if (db === 'MongoDB' && redis === 'No')
-    template = options(path).mongo;
+const addDocker = async (path: string) => {
+  const destination = isExists(path + '/src') ? path + '/src' : path;
 
-  // Choose redis + mongo template
-  if (redis === 'Yes' && db === 'MongoDB')
-    template = options(path).redis_mongo;
-
-  // Return
-  return template;
+  await copy(optionsDir.docker, destination);
 };
 
+// const addDocker = async (path: string, redis: string, db: string) => {
+//   // Basic docker option
+//   let dockerOption = options(dockerDir).basic;
+//
+//   // Define docker option
+//   if (redis === 'Yes' && db === 'None')
+//     dockerOption = options(dockerDir).redis;
+//   if (db === 'MongoDB' && redis === 'No')
+//     dockerOption = options(dockerDir).mongo;
+//   if (redis === 'Yes' && db === 'MongoDB')
+//     dockerOption = options(dockerDir).redis_mongo;
+//
+//   // Copy docker files
+//   await copy(dockerOption, path);
+// };
+
 /* ------------------------------------------------------------------- */
-/*                              Add Docker
+/**
+ *  Adds bash scripts
+ *
+ *  @param path - Project path
+ *  @param docker - Docker option
+ */
 /* ------------------------------------------------------------------- */
 
-const addDocker = (path: string, redis: string, db: string) => {
-  // Basic docker option
-  let dockerOption = options(dockerDir).basic;
+const addScripts = async (path: string, docker: string) => {
+  await copy(optionsDir.env, `${path}/env`);
+  await copy(`${optionsDir.scripts}/env.sh`, `${path}/env.sh`);
+  insert(`${path}/Readme.md`, envShReadme);
 
-  // Define docker option
-  if (redis === 'Yes' && db === 'None')
-    dockerOption = options(dockerDir).redis;
-  if (db === 'MongoDB' && redis === 'No')
-    dockerOption = options(dockerDir).mongo;
-  if (redis === 'Yes' && db === 'MongoDB')
-    dockerOption = options(dockerDir).redis_mongo;
-
-  // Copy docker files
-  ncpAsync(dockerOption, path)
-    .catch(err =>
-        console.log('Error copying docker files. Please try again', err));
+  // If docker -> add run.sh
+  if (docker === 'Yes') {
+    await copy(`${optionsDir.scripts}/run.sh`, `${path}/run.sh`);
+    insert(`${path}/Readme.md`, runShReadme);
+  }
 };

@@ -9,37 +9,39 @@
 /* ------------------------------------------------------------------- */
 
 // ====> Config
-import { optionsDirs as OD } from '../utils/config';
+import { optionsDir as OD } from '../utils/config';
 
 // ====> Services
-import { read, insert, copy } from './';
+import { read, insert, copy, isExists } from './';
 
 /* ------------------------------------------------------------------- */
 /**
- *  Add redis
+ *  Adds Redis option files
  *
  *  @param path - Project dir file path
  */
 /* ------------------------------------------------------------------- */
 
-export const addRedis = (path: string) => {
-  // packageJson(path);
-  // copyFiles(path);
-  // env(path);
-  // config(path);
-  // routes(path);
-  swagger(path);
+export const addRedis = async (path: string) => {
+  const source = isExists(path + '/src') ? path + '/src' : path;
+
+  packageJson(source);
+  await copyFiles(source);
+  addExports(source);
+  env(source);
+  config(source);
+  routes(source);
+  swagger(source);
+  addDocker(source);
 };
 
 /* ------------------------------------------------------------------- */
 /**
  *  Updates package.json
- *
- *  @param path - Project dir file path
  */
 /* ------------------------------------------------------------------- */
 
-export const packageJson = (path: string) => {
+const packageJson = (path: string) => {
   insert(path + '/package.json', pkg.types, pkg.typesAfter);
   insert(path + '/package.json', pkg.redis, pkg.redisAfter);
 };
@@ -47,29 +49,52 @@ export const packageJson = (path: string) => {
 /* ------------------------------------------------------------------- */
 /**
  *  Copies new files
- *
- *  @param path - Project dir file path
  */
 /* ------------------------------------------------------------------- */
 
-export const copyFiles = async (path: string) => {
+const copyFiles = async (path: string) => {
   const source = path + '/server';
 
-  // Copy service
-  await copy(OD.redis + filePaths.service, source + filePaths.service);
-  await copy(OD.redis + filePaths.interface, source + filePaths.interface);
   await copy(OD.redis + filePaths.redisKeys, source + filePaths.redisKeys);
+  await copy(OD.redis + filePaths.interfaces, source + filePaths.interfaces);
+  await copy(OD.redis + filePaths.services, source + filePaths.services);
+  await copy(OD.redis + filePaths.routes, source + filePaths.routes);
+};
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Adds 'export * from file' records
+ */
+/* ------------------------------------------------------------------- */
+
+const addExports = (path: string) => {
+  const source = path + '/server';
+
+  insert(
+    source + filePaths.interfaces + '/index.ts',
+    exportRecords.interfaces, null, exportRecords.interfacesBefore
+  );
+  insert(
+    source + filePaths.services + '/index.ts',
+    exportRecords.services, null, exportRecords.servicesBefore
+  );
+  insert(
+    source + filePaths.routes + '/index.ts',
+    exportRecords.routes.import, exportRecords.routes.importAfter
+  );
+  insert(
+    source + filePaths.routes + '/index.ts',
+    exportRecords.routes.router, exportRecords.routes.routerAfter
+  );
 };
 
 /* ------------------------------------------------------------------- */
 /**
  *  Updates .env
- *
- *  @param path - Project dir file path
  */
 /* ------------------------------------------------------------------- */
 
-export const env = (path: string) => {
+const env = (path: string) => {
   // Insert before
   insert(path + '/.env', envApi, '', envApiBefore, true);
   insert(path + '/.env', envRedis, '', envRedisBefore, true);
@@ -82,12 +107,10 @@ export const env = (path: string) => {
 /* ------------------------------------------------------------------- */
 /**
  *  Updates config.ts
- *
- *  @param path - Project dir file path
  */
 /* ------------------------------------------------------------------- */
 
-export const config = (path: string) => {
+const config = (path: string) => {
   const file = path + '/server/utils/config.ts';
 
   insert(file, configApi, 'export const API = {');
@@ -96,13 +119,11 @@ export const config = (path: string) => {
 
 /* ------------------------------------------------------------------- */
 /**
- *  Updates config.ts
- *
- *  @param path - Project dir file path
+ *  Updates routes.ts
  */
 /* ------------------------------------------------------------------- */
 
-export const routes = (path: string) => {
+const routes = (path: string) => {
   const file = path + '/server/utils/routes.ts';
 
   insert(file, routesData, routesDataAfter);
@@ -111,18 +132,30 @@ export const routes = (path: string) => {
 /* ------------------------------------------------------------------- */
 /**
  *  Updates swagger.ts
- *
- *  @param path - Project dir file path
  */
 /* ------------------------------------------------------------------- */
 
-export const swagger = (path: string) => {
+const swagger = (path: string) => {
   const file = path + '/server/utils/swagger.ts';
 
   const data = read(OD.redis + filePaths.swagger);
 
   insert(file, data, 'paths: {', null, true);
   insert(file, swaggerData, swaggerDataAfter);
+};
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Adds Docker files
+ */
+/* ------------------------------------------------------------------- */
+
+const addDocker = (path: string) => {
+  if (!isExists(path + '/Dockerfile'))
+    return;
+
+  insert(path + '/docker-compose.yml', dockerLinksEnv, dockerLinksEnvAfter);
+  insert(path + '/docker-compose.yml', dockerRedis);
 };
 
 /* ------------------------------------------------------------------- */
@@ -141,10 +174,28 @@ const pkg = {
 /* ------------------------------------------------------------------- */
 
 const filePaths = {
-  interface: '/interfaces',
-  service: '/services',
+  interfaces: '/interfaces',
+  services: '/services',
+  routes: '/routes',
   redisKeys: '/utils/redisKeys.ts',
   swagger: '/utils/swagger.ts',
+};
+
+/* ------------------------------------------------------------------- */
+/*                       'export * from file' records
+/* ------------------------------------------------------------------- */
+
+const exportRecords = {
+  interfaces: `export * from './ICacheService';`,
+  interfacesBefore: `export * from './ILogger';`,
+  services: `export * from './CacheService';`,
+  servicesBefore: `export * from './DocsApiService';`,
+  routes: {
+    import: `import cache from './cache';`,
+    importAfter: `import info from './info';`,
+    router: `\nrouter.use(routes.CACHE.endPoint, cache);`,
+    routerAfter: `router.use(routes.INFO.endPoint, info);`,
+  },
 };
 
 /* ------------------------------------------------------------------- */
@@ -232,3 +283,27 @@ const swaggerDataAfter = `\
       name: 'HEALTH',
       description: 'ALB health check'
     },`;
+
+/* ------------------------------------------------------------------- */
+/*                       docker-compose.yml
+/* ------------------------------------------------------------------- */
+
+const dockerLinksEnv = `\
+    links:
+      - redis:redis
+    environment:
+      - REDIS_URL=redis://redis:6301
+      - REDIS_PWD=redisPassw0rd42t34t4gr`;
+
+const dockerLinksEnvAfter = 'restart: unless-stopped:0';
+
+const dockerRedis = `\
+  redis:
+    image: redis:alpine
+    container_name: basic-server-redis
+    restart: unless-stopped:0
+    command: redis-server --port 6301 --requirepass redisPassw0rd42t34t4gr
+    expose:
+      - 6301
+    ports:
+      - "6301:6301"`;

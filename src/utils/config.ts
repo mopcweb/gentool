@@ -28,18 +28,12 @@ export const dir = process.cwd();
 // =====> Langs
 export const langsDir = path.join(__dirname, '../templates');
 
-// =====> Docker files
-export const dockerDir = path.join(__dirname, '../docker');
-
-// =====> Env dir
-export const envDir = path.join(__dirname, '../env');
-
-// =====> Shell scripts dir
-export const scriptsDir = path.join(__dirname, '../scripts');
-
 // =====> Options dir
-export const optionsDirs = {
-  redis: path.join(__dirname, '../options/redis')
+export const optionsDir = {
+  docker: path.join(__dirname, '../options/docker/basic'),
+  env: path.join(__dirname, '../options/env'),
+  redis: path.join(__dirname, '../options/redis'),
+  scripts: path.join(__dirname, '../options/scripts'),
 };
 
 /* ------------------------------------------------------------------- */

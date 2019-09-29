@@ -22,8 +22,8 @@ import {
 /*                               Init
 /* ------------------------------------------------------------------- */
 
-addRedis(dir + '/basic/src');
+// addRedis(dir + '/some');
 
-// start();
+start();
 
-// prompt();
+prompt();

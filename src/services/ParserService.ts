@@ -20,23 +20,38 @@ const ncpAsync = promisify(ncp);
 
 /* ------------------------------------------------------------------- */
 /**
- *  Copy file / files
+ *  Copies file(s)
  *
- *  @param oldPath - Old file / files path
- *  @param newPath - New file / files path
+ *  @param oldPath - Old file(s) path(s)
+ *  @param newPath - New file(s) path(s)
  */
 /* ------------------------------------------------------------------- */
 
 export const copy = async (oldPath: string, newPath: string) =>
   ncpAsync(oldPath, newPath)
     .catch(err =>
-        console.log('Error copying new project. Please try again', err));
+      console.log(
+        `Error copying from: ${oldPath}, to: ${newPath}. Please try again \n`,
+        err
+      ));
+
+/* ------------------------------------------------------------------- */
+/**
+ *  Checks if dir exists
+ *
+ *  @param path - File path
+ */
+/* ------------------------------------------------------------------- */
+
+export const isExists = (path: string) => {
+  return fs.existsSync(path);
+};
 
 /* ------------------------------------------------------------------- */
 /**
  *  Reads file and returns its content
  *
- *  @param path - File path, relatively to dir path
+ *  @param path - File path
  */
 /* ------------------------------------------------------------------- */
 
@@ -48,7 +63,7 @@ export const read = (path: string) => {
 /**
  *  Inserts data into file
  *
- *  @param path - File path, relatively to dir path
+ *  @param path - File path
  *  @param data - Data to insert
  *  @param [after] - String, after which to insert
  *  @param [before] - String, before which to insert

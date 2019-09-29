@@ -60,7 +60,8 @@ export const questions: Questions = [
     type: 'list',
     when: res => res[questionTitles.lang] === 'typescript' ? true : false,
     message: 'What project would you like to generate?',
-    choices: tsTemplates
+    // choices: tsTemplates
+    choices: ['server']
   },
 
   /* ********************** CLIENT QUESTIONS  *********************** */

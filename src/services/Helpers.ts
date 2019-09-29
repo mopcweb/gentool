@@ -9,7 +9,9 @@ import * as fs from 'fs';
 
 /* ------------------------------------------------------------------- */
 /**
- *  Parse package.json
+ *  Parses package.json
+ *
+ *  @param [letter=true] - Defines whether to show letter 'v' near version
  */
 /* ------------------------------------------------------------------- */
 
@@ -30,7 +32,9 @@ export const parsePackage = (letter = true) => {
 
 /* ------------------------------------------------------------------- */
 /**
- *  Capitalize
+ *  Capitalizes string
+ *
+ *  @param str - String to capitalize
  */
 /* ------------------------------------------------------------------- */
 
@@ -39,7 +43,9 @@ export const capitalize = (str: string) =>
 
 /* ------------------------------------------------------------------- */
 /**
- *  Read dirs using path. Ignore '.' dirs
+ *  Reads dirs using path and returns as array. Ignores '.' notation
+ *
+ *  @param dir - Path
  */
 /* ------------------------------------------------------------------- */
 
@@ -60,7 +66,9 @@ export const dirsArray = (dir: string) => {
 
 /* ------------------------------------------------------------------- */
 /**
- *  Templates options
+ *  Reads dirs using path and returns as object. Ignores '.' notation
+ *
+ *  @param dir - Path
  */
 /* ------------------------------------------------------------------- */
 
@@ -84,7 +92,10 @@ export const dirsObject = (dir: string) => {
 
 /* ------------------------------------------------------------------- */
 /**
- *  Rename .npmignore to .gitignore, due to npm bug
+ *  Renames .npmignore to .gitignore, due to npm bug
+ *
+ *  @param dir - Path
+ *  @param [fileList=[]] - File list
  */
 /* ------------------------------------------------------------------- */
 
@@ -109,7 +120,7 @@ export const rename = (dir: string, fileList: any[] = []) => {
 
 /* ------------------------------------------------------------------- */
 /**
- *  Finish project creation
+ *  Finishes project creation
  */
 /* ------------------------------------------------------------------- */
 
