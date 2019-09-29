@@ -17,7 +17,9 @@ import { OK } from 'http-status';
 // =====> Constants
 import { } from '../utils/constants';
 
-import { definitions, responses } from './swaggerHelpers';
+import {
+  definitions, responses, commonGetParams, authHeader
+} from './swaggerHelpers';
 
 /* ------------------------------------------------------------------- */
 /*                              Export
@@ -52,7 +54,7 @@ export default {
     {
       name: 'HEALTH',
       description: 'ALB health check'
-    }
+    },
   ],
 
   /* ------------------------------------------------------------------- */

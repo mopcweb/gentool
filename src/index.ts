@@ -14,15 +14,15 @@
 import { dir } from './utils/config';
 
 // =====> Services
-import { prompt, start, env, packageJson, copyFiles } from './services';
+import {
+  prompt, start, addRedis
+} from './services';
 
 /* ------------------------------------------------------------------- */
 /*                               Init
 /* ------------------------------------------------------------------- */
 
-// env(dir + '/basic/src');
-// packageJson(dir + '/basic/src');
-copyFiles(dir + '/basic/src');
+addRedis(dir + '/basic/src');
 
 // start();
 
