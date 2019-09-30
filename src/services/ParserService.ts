@@ -65,8 +65,10 @@ export const read = (path: string) => {
  *
  *  @param path - File path
  *  @param data - Data to insert
- *  @param [after] - String, after which to insert
- *  @param [before] - String, before which to insert
+ *  @param [after] - String | RegExp, after which to insert
+ *  @param [before] - String | RegExp, before which to insert
+ *  @param [removeNewLine] - Whether to remove empty newLine
+ *  after / before insertion position
  */
 /* ------------------------------------------------------------------- */
 
@@ -77,7 +79,7 @@ export const insert = (
   // Read file
   const readed = fs.readFileSync(path, 'utf-8');
 
-  // Get position to insert: after provided string or to the end by default
+  // Get position to insert (to the end of file by default)
   let index = readed.length;
   let dataWithOffset: any = '\n' + data;
 
@@ -85,10 +87,6 @@ export const insert = (
     // Find as RegExp and as string
     const match = readed.match(after);
     const indexOf = readed.indexOf(after as string);
-
-    // console.log('after >>> \n', after);
-    // console.log('match >>> \n', match);
-    // console.log('indexOf >>> \n', indexOf);
 
     // If as RegExp found
     if (match && match[0] && match.index !== -1)
@@ -107,10 +105,6 @@ export const insert = (
     const match = readed.match(before);
     const indexOf = readed.indexOf(before as string);
 
-    // console.log('before >>> \n', before);
-    // console.log('match >>> \n', match);
-    // console.log('indexOf >>> \n', indexOf);
-
     // If as RegExp found
     if (match && match[0] && match.index !== -1) {
       removeNewLine
@@ -127,8 +121,6 @@ export const insert = (
       dataWithOffset = data + '\n';
     }
   }
-
-  // console.log('dataWithOffset >>> \n', dataWithOffset);
 
   // Get file text, which would be overwriten by new
   const substring = readed.substring(index);

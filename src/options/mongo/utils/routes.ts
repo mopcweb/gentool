@@ -3,8 +3,8 @@
 /* ------------------------------------------------------------------- */
 
 export const routes = {
-  CACHE: {
-    endPoint: API.CACHE.ROOT,
-    method: 'GET'
-  }
+  LOGS: {
+    endPoint: API.LOGS,
+    method: 'GET, DELETE'
+  },
 };
