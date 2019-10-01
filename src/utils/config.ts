@@ -32,6 +32,7 @@ export const langsDir = path.join(__dirname, '../templates');
 export const optionsDir = {
   docker: path.join(__dirname, '../options/docker/basic'),
   env: path.join(__dirname, '../options/env'),
+  mongo: path.join(__dirname, '../options/mongo'),
   redis: path.join(__dirname, '../options/redis'),
   scripts: path.join(__dirname, '../options/scripts'),
 };

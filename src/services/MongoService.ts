@@ -22,7 +22,7 @@ import { read, insert, copy, isExists } from './';
  */
 /* ------------------------------------------------------------------- */
 
-export const addRedis = async (path: string) => {
+export const addMongo = async (path: string) => {
   const source = isExists(path + '/src') ? path + '/src' : path;
 
   packageJson(source);
@@ -43,7 +43,7 @@ export const addRedis = async (path: string) => {
 
 const packageJson = (path: string) => {
   insert(path + '/package.json', pkg.types, pkg.typesAfter);
-  insert(path + '/package.json', pkg.redis, pkg.redisAfter);
+  insert(path + '/package.json', pkg.mongo, pkg.mongoAfter);
 };
 
 /* ------------------------------------------------------------------- */
@@ -55,10 +55,11 @@ const packageJson = (path: string) => {
 const copyFiles = async (path: string) => {
   const source = path + '/server';
 
-  await copy(OD.redis + filePaths.redisKeys, source + filePaths.redisKeys);
-  await copy(OD.redis + filePaths.interfaces, source + filePaths.interfaces);
-  await copy(OD.redis + filePaths.services, source + filePaths.services);
-  await copy(OD.redis + filePaths.routes, source + filePaths.routes);
+  await copy(OD.mongo + filePaths.interfaces, source + filePaths.interfaces);
+  await copy(OD.mongo + filePaths.models, source + filePaths.models);
+  await copy(OD.mongo + filePaths.services, source + filePaths.services);
+  await copy(OD.mongo + filePaths.controllers, source + filePaths.controllers);
+  await copy(OD.mongo + filePaths.routes, source + filePaths.routes);
 };
 
 /* ------------------------------------------------------------------- */
@@ -72,11 +73,15 @@ const addExports = (path: string) => {
 
   insert(
     source + filePaths.interfaces + '/index.ts',
-    exportRecords.interfaces, null, exportRecords.interfacesBefore
+    exportRecords.interfaces, exportRecords.interfacesAfter
   );
   insert(
-    source + filePaths.services + '/index.ts',
-    exportRecords.services, null, exportRecords.servicesBefore
+    source + filePaths.models + '/index.ts',
+    exportRecords.models
+  );
+  insert(
+    source + filePaths.controllers + '/index.ts',
+    exportRecords.controllers
   );
   insert(
     source + filePaths.routes + '/index.ts',
@@ -97,11 +102,8 @@ const addExports = (path: string) => {
 const env = (path: string) => {
   // Insert before
   insert(path + '/.env', envApi, '', envApiBefore, true);
-  insert(path + '/.env', envRedis, '', envRedisBefore, true);
-
-  // Insert after
-  // insert(path, envApi, `SWAGGER_ENDPOINT="/swagger"`);
-  // insert(path, envRedis, 'HEALTH_ENDPOINT="/health.html"');
+  insert(path + '/.env', envMongo, '', envMongoBefore, true);
+  insert(path + '/.env', envMongoLogLevel, 'LOG_LEVEL="debug"');
 };
 
 /* ------------------------------------------------------------------- */
@@ -113,8 +115,10 @@ const env = (path: string) => {
 const config = (path: string) => {
   const file = path + '/server/utils/config.ts';
 
+  const data = read(OD.mongo + filePaths.config);
+
   insert(file, configApi, 'export const API = {');
-  insert(file, configRedis, '', configRedisBefore, true);
+  insert(file, data, null, configMongoBefore);
 };
 
 /* ------------------------------------------------------------------- */
@@ -138,7 +142,7 @@ const routes = (path: string) => {
 const swagger = (path: string) => {
   const file = path + '/server/utils/swagger.ts';
 
-  const data = read(OD.redis + filePaths.swagger);
+  const data = read(OD.mongo + filePaths.swagger);
 
   insert(file, data, 'paths: {', null, true);
   insert(file, swaggerData, swaggerDataAfter);
@@ -155,7 +159,7 @@ const addDocker = (path: string) => {
     return;
 
   insert(path + '/docker-compose.yml', dockerLinksEnv, dockerLinksEnvAfter);
-  insert(path + '/docker-compose.yml', dockerRedis);
+  insert(path + '/docker-compose.yml', dockerMongo);
 };
 
 /* ------------------------------------------------------------------- */
@@ -163,10 +167,10 @@ const addDocker = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const pkg = {
-  types: `    "@types/redis": "^2.8.13",`,
-  typesAfter: /"@types\/node": .*?,/,
-  redis: `    "redis": "^2.8.0",`,
-  redisAfter: /"http-status": .*?,/
+  types: `    "@types/mongoose": "^5.5.7",`,
+  typesAfter: /"@types\/http-status": .*?,/,
+  mongo: `    "mongoose": "^5.6.2",`,
+  mongoAfter: /"http-status": .*?,/
 };
 
 /* ------------------------------------------------------------------- */
@@ -175,8 +179,11 @@ const pkg = {
 
 const filePaths = {
   interfaces: '/interfaces',
+  models: '/models',
   services: '/services',
+  controllers: '/controllers',
   routes: '/routes',
+  config: '/utils/config.ts',
   redisKeys: '/utils/redisKeys.ts',
   swagger: '/utils/swagger.ts',
 };
@@ -186,14 +193,17 @@ const filePaths = {
 /* ------------------------------------------------------------------- */
 
 const exportRecords = {
-  interfaces: `export * from './ICacheService';`,
-  interfacesBefore: `export * from './ILogger';`,
-  services: `export * from './CacheService';`,
-  servicesBefore: `export * from './DocsApiService';`,
+  interfaces: `export * from './ILogs';\n` +
+    `export * from './ILogsController';`,
+  interfacesAfter: `export * from './ILogger';`,
+  models: `export * from './CrudController';\n` +
+    `export * from './LogsModel';`,
+  controllers: `export * from './LogsController';\n` +
+    `export * from './MongoDB';`,
   routes: {
-    import: `import cache from './cache';`,
+    import: `import logs from './logs';`,
     importAfter: `import info from './info';`,
-    router: `\nrouter.use(routes.CACHE.endPoint, cache);`,
+    router: `\nrouter.use(routes.LOGS.endPoint, logs);`,
     routerAfter: `router.use(routes.INFO.endPoint, info);`,
   },
 };
@@ -202,51 +212,39 @@ const exportRecords = {
 /*                                .env
 /* ------------------------------------------------------------------- */
 
-const envApi = `\
-CACHE_ENDPOINT = "/cache"
-CACHE_CLEAR_ENDPOINT="/clear"`;
+const envApi = 'LOGS_ENDPOINT="/logs"';
 
 const envApiBefore = `\
 #----------------------------------------------------------------------#
 #                               ROUTES
 #----------------------------------------------------------------------#`;
 
-const envRedis = `
+const envMongo = `
 #----------------------------------------------------------------------#
-#                               REDIS
+#                               MONGO
 #----------------------------------------------------------------------#
 
-REDIS_URL = "redis://localhost:6301"
-# REDIS_PWD = "someAwesomeRedisPwd6301"
+MONGO_USER="admin"
+MONGO_PWD="qaz12345"
+MONGO_HOST="localhost"
+MONGO_PORT="27017"
+MONGO_DB="basic_server"
+MONGO_AUTH_SOURCE="admin"`;
 
-# Seconds (24 hours = (24 * 60 * 60) s)
-CACHE_EXPIRATION=86400`;
-
-const envRedisBefore = `\
+const envMongoBefore = `\
 #----------------------------------------------------------------------#
 #                               LOGGER
 #----------------------------------------------------------------------#`;
+
+const envMongoLogLevel = 'MONGO_LOG_LEVEL="error"';
 
 /* ------------------------------------------------------------------- */
 /*                        server/utils/config.ts
 /* ------------------------------------------------------------------- */
 
-const configApi = `\
-  CACHE: {
-    CLEAR: process.env.CACHE_CLEAR_ENDPOINT,
-    ROOT: process.env.API + process.env.CACHE_ENDPOINT
-  },`;
+const configApi = '  LOGS: process.env.API + process.env.LOGS_ENDPOINT,';
 
-const configRedis = `
-/* ------------------------------------------------------------------- */
-/*                               REDIS
-/* ------------------------------------------------------------------- */
-
-export const REDIS_URL = process.env.REDIS_URL;
-export const REDIS_PWD = process.env.REDIS_PWD;
-export const CACHE_EXPIRATION = +process.env.CACHE_EXPIRATION;`;
-
-const configRedisBefore = `\
+const configMongoBefore = `\
 /* ------------------------------------------------------------------- */
 /*                               LOGGER
 /* ------------------------------------------------------------------- */`;
@@ -256,14 +254,14 @@ const configRedisBefore = `\
 /* ------------------------------------------------------------------- */
 
 const routesData = `\
-  CACHE: {
-    endPoint: API.CACHE.ROOT,
-    method: 'GET'
+  LOGS: {
+    endPoint: API.LOGS,
+    method: 'GET, DELETE'
   },`;
 
 const routesDataAfter = `\
-  HEALTH: {
-    endPoint: ROUTES.HEALTH,
+  INFO: {
+    endPoint: API.INFO,
     method: 'GET'
   },`;
 
@@ -273,9 +271,8 @@ const routesDataAfter = `\
 
 const swaggerData = `\
     {
-      name: 'CACHE',
-      description: 'Provides ability to get cache (all records or by key), ' +
-      'delete (by key) or clear'
+      name: 'LOGS',
+      description: 'Provides server logs, stored in DB'
     },`;
 
 const swaggerDataAfter = `\
@@ -290,20 +287,27 @@ const swaggerDataAfter = `\
 
 const dockerLinksEnv = `\
     links:
-      - redis:redis
+      - mongodb:mongodb
     environment:
-      - REDIS_URL=redis://redis:6301
-      - REDIS_PWD=redisPassw0rd42t34t4gr`;
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_USER=root
+      - MONGO_PWD=rootPass2ab4e199
+      - MONGO_AUTH_SOURCE=admin`;
 
 const dockerLinksEnvAfter = 'restart: unless-stopped:0';
 
-const dockerRedis = `\
-  redis:
-    image: redis:alpine
-    container_name: basic-server-redis
+const dockerMongo = `\
+  mongodb:
+    image: mongo:latest
+    container_name: basic-server-mongodb
     restart: unless-stopped:0
-    command: redis-server --port 6301 --requirepass redisPassw0rd42t34t4gr
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootPass2ab4e199
+      - MONGO_INITDB_ROOT_DATABASE=admin
     expose:
-      - 6301
+      - 27017
     ports:
-      - "6301:6301"`;
+      - "27017:27017"
+    command: mongod --auth`;

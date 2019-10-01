@@ -1,76 +1,89 @@
-    /* *************************** CACHE ROUTE ************************** */
+    /* *************************** LOGS ROUTE *************************** */
 
     // =====> Get all
-    [API.CACHE.ROOT]: {
+    [API.LOGS]: {
       get: {
-        tags: ['CACHE'],
-        summary: 'Get all cache records',
-        operationId: 'getCache',
-        parameters: [ ...authHeader ],
+        tags: ['LOGS'],
+        summary: 'Get all logs',
+        operationId: 'getLogs',
+        parameters: [ ...authHeader, ...commonGetParams ],
         responses: responses({
-          url: API.CACHE.ROOT,
-          ok: [{ key: 'testKey', ttl: 123 }, { key: 'test2Key', ttl: 234 }],
+          url: API.LOGS,
+          ok: [
+            {
+              _id: '5d80f7fca614cd009c1ccd31',
+              timestamp: '2019-09-17T15:13:00.561Z',
+              level: 'error',
+              message: "{ status: 404,\n  statusText: 'Not Found',\n  requestFrom: 'https://o365-ui-stage.signet.tv/dashboard/middleware',\n  method: 'GET',\n  endPoint: '/api/v1/oi/info',\n  data: 'No such API provided with server' }",
+              meta: null,
+              hostname: 'a6cd47e5e3d3',
+              label: {
+                 INSTANCE: 'STAGE',
+                 VERSION: '1.0.1'
+              }
+            }
+          ],
         })
-      }
+      },
     },
 
-    // =====> Get by key
-    [`${API.CACHE.ROOT}/{key}`]: {
+    // =====> Get all
+    [`${API.LOGS}/{id}`]: {
       get: {
-        tags: ['CACHE'],
-        summary: 'Get cache record by key',
-        operationId: 'getCacheRecord',
+        tags: ['LOGS'],
+        summary: 'Get log by id',
+        operationId: 'getLogById',
         parameters: [
           ...authHeader,
+          ...commonGetParams,
           {
             in: 'path',
-            name: 'key',
-            description: 'Record key',
+            name: 'id',
+            description: 'Log id',
             schema: { type: 'string' },
-            required: false
+            required: true
           },
         ],
         responses: responses({
-          url: `${API.CACHE.ROOT}/{key}`,
-          ok: 'Any data: array, object, string, number',
+          url: `${API.LOGS}/{id}`,
+          ok: {
+            _id: '5d80f7fca614cd009c1ccd31',
+            timestamp: '2019-09-17T15:13:00.561Z',
+            level: 'error',
+            message: "{ status: 404,\n  statusText: 'Not Found',\n  requestFrom: 'https://o365-ui-stage.signet.tv/dashboard/middleware',\n  method: 'GET',\n  endPoint: '/api/v1/oi/info',\n  data: 'No such API provided with server' }",
+            meta: null,
+            hostname: 'a6cd47e5e3d3',
+            label: {
+               INSTANCE: 'STAGE',
+               VERSION: '1.0.1'
+            }
+          },
+          badRequest: '',
+          notFound: '',
         })
-      }
-    },
+      },
 
-    // =====> Delete by key
-    [`${API.CACHE.ROOT}/delete/{key}`]: {
-      get: {
-        tags: ['CACHE'],
-        summary: 'Delete record from cache',
-        operationId: 'deleteCache',
+      delete: {
+        tags: ['LOGS'],
+        summary: 'Delete log by id',
+        operationId: 'deleteLogById',
         parameters: [
           ...authHeader,
+          ...commonGetParams,
           {
             in: 'path',
-            name: 'key',
-            description: 'Record key',
+            name: 'id',
+            description: 'Log id',
             schema: { type: 'string' },
-            required: false
+            required: true
           },
         ],
         responses: responses({
-          url: `${API.CACHE.ROOT}/delete/{key}`,
-          ok: 'Cache recored deleted by key: someKey',
-        }),
-      }
-    },
-
-    // =====> Clear all
-    [`${API.CACHE.ROOT}/clear`]: {
-      get: {
-        tags: ['CACHE'],
-        summary: 'Clear cache',
-        operationId: 'clearCache',
-        parameters: [ ...authHeader ],
-        responses: responses({
-          url: `${API.CACHE.ROOT}/${API.CACHE.CLEAR}`,
-          ok: 'Cache successfully cleared',
-          notFound: false
-        }),
-      }
+          url: `${API.LOGS}/{id}`,
+          method: 'DELETE',
+          ok: 'Succefully deleted items: 1',
+          badRequest: '',
+          notFound: '',
+        })
+      },
     },

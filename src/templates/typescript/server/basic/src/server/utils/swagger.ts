@@ -48,12 +48,12 @@ export default {
 
   tags: [
     {
-      name: 'INFO',
-      description: 'Current server info'
-    },
-    {
       name: 'HEALTH',
       description: 'ALB health check'
+    },
+    {
+      name: 'INFO',
+      description: 'Current server info'
     },
   ],
 

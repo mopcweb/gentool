@@ -15,15 +15,15 @@ import { dir } from './utils/config';
 
 // =====> Services
 import {
-  prompt, start, addRedis
+  prompt, start, addMongo
 } from './services';
 
 /* ------------------------------------------------------------------- */
 /*                               Init
 /* ------------------------------------------------------------------- */
 
-// addRedis(dir + '/some');
+addMongo(dir + '/basic');
 
-start();
+// start();
 
-prompt();
+// prompt();

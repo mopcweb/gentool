@@ -5,6 +5,7 @@
 /* ################################################################### */
 
 export * from './Helpers';
+export * from './MongoService';
 export * from './ParserService';
 export * from './ProjectService';
 export * from './QuestionsService';

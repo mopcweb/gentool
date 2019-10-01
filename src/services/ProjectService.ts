@@ -23,7 +23,7 @@ import {
 
 // =====> Services
 import {
-  questions, dirsObject as options, finish, addRedis, copy, insert,
+  questions, dirsObject as options, finish, addRedis, addMongo, copy, insert,
   isExists
 } from './';
 
@@ -114,6 +114,9 @@ const createServer = async (answers: inquirer.Answers) => {
 
   if (redis === 'Yes')
     await addRedis(project);
+
+  if (db === 'MongoDB')
+    await addMongo(project);
 
   if (root === 'Project')
     await addScripts(project, docker);
