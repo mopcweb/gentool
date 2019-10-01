@@ -14,7 +14,7 @@
               _id: '5d80f7fca614cd009c1ccd31',
               timestamp: '2019-09-17T15:13:00.561Z',
               level: 'error',
-              message: "{ status: 404,\n  statusText: 'Not Found',\n  requestFrom: 'https://o365-ui-stage.signet.tv/dashboard/middleware',\n  method: 'GET',\n  endPoint: '/api/v1/oi/info',\n  data: 'No such API provided with server' }",
+              message: '{ status: 404,\n  statusText: "Not Found" }',
               meta: null,
               hostname: 'a6cd47e5e3d3',
               label: {
@@ -46,11 +46,12 @@
         ],
         responses: responses({
           url: `${API.LOGS}/{id}`,
+          title: 'Log',
           ok: {
             _id: '5d80f7fca614cd009c1ccd31',
             timestamp: '2019-09-17T15:13:00.561Z',
             level: 'error',
-            message: "{ status: 404,\n  statusText: 'Not Found',\n  requestFrom: 'https://o365-ui-stage.signet.tv/dashboard/middleware',\n  method: 'GET',\n  endPoint: '/api/v1/oi/info',\n  data: 'No such API provided with server' }",
+            message: '{ status: 404,\n  statusText: "Not Found" }',
             meta: null,
             hostname: 'a6cd47e5e3d3',
             label: {

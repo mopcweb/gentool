@@ -37,9 +37,9 @@ export const copy = async (oldPath: string, newPath: string) =>
 
 /* ------------------------------------------------------------------- */
 /**
- *  Checks if dir exists
+ *  Checks if dir / file exists
  *
- *  @param path - File path
+ *  @param path - Dir / file path
  */
 /* ------------------------------------------------------------------- */
 
@@ -61,79 +61,110 @@ export const read = (path: string) => {
 
 /* ------------------------------------------------------------------- */
 /**
+ *  Gets file substring
+ *
+ *  @param path - Dir / file path
+ *  @param substr - Substring to get
+ *  @param [file] - File, in order not to read manually
+ */
+/* ------------------------------------------------------------------- */
+
+export const getSubstring = (
+  path: string, substr: string | RegExp, file?: any
+) => {
+  if (!isExists(path))
+    return { };
+
+  if (!file)
+    file = read(path);
+
+  // Vars
+  let start: number;
+  let length: number;
+  let end: number;
+
+  // Find as RegExp and as string
+  const match = file.match(substr);
+  const indexOf = file.indexOf(substr as string);
+
+  // If as RegExp found
+  if (match && match[0] && match.index !== -1) {
+    start = match.index;
+    length = match[0].length;
+    end = start + length;
+  }
+
+  // Else if as string found
+  else if (indexOf !== -1 && typeof substr === 'string') {
+    start = indexOf;
+    length = substr.length;
+    end = start + length;
+  }
+
+  return start !== undefined && length !== undefined && end !== undefined
+    ? { start, length, end }
+    : { };
+};
+
+/* ------------------------------------------------------------------- */
+/**
  *  Inserts data into file
  *
  *  @param path - File path
  *  @param data - Data to insert
- *  @param [after] - String | RegExp, after which to insert
- *  @param [before] - String | RegExp, before which to insert
- *  @param [removeNewLine] - Whether to remove empty newLine
- *  after / before insertion position
+ *  @param [substr] - String | RegExp, by which to get substring to define
+ *  insert position
+ *  @param [mode='a'] - Defines mode: after substr, before or replace
+ *  @param [removeNewLine=false] - Whether to remove empty newLine
+ *  after / before insertion position. TO BE REMOVED
  */
 /* ------------------------------------------------------------------- */
 
 export const insert = (
-  path: string, data: any, after?: string | RegExp, before?: string | RegExp,
-  removeNewLine = false
+  path: string, data: any, substr?: string | RegExp,
+  mode: 'a' | 'b' | 'r' = 'a', removeNewLine = false
 ) => {
   // Read file
-  const readed = fs.readFileSync(path, 'utf-8');
+  const file = read(path);
+
+  if (!file)
+    return;
 
   // Get position to insert (to the end of file by default)
-  let index = readed.length;
-  let dataWithOffset: any = '\n' + data;
+  let index = file.length;
 
-  if (after) {
-    // Find as RegExp and as string
-    const match = readed.match(after);
-    const indexOf = readed.indexOf(after as string);
+  if (mode === 'a' || mode === 'b') {
+    const { start, end } = getSubstring(path, substr, file);
 
-    // If as RegExp found
-    if (match && match[0] && match.index !== -1)
+    if (mode === 'a' && end)
       removeNewLine
-        ? index = match.index + match[0].length + 1
-        : index = match.index + match[0].length;
-
-    // Else if as string found
-    else if (indexOf !== -1 && typeof after === 'string')
+        ? index = end + 1
+        : index = end;
+    else if (mode === 'b' && start)
       removeNewLine
-        ? index = indexOf + after.length + 1
-        : index = indexOf + after.length;
+        ? index = start - 1
+        : index = start;
+
+    // Get file text, which would be overwriten by new
+    const substring = file.substring(index);
+
+    // Data to insert
+    const text = Buffer.from(data + substring);
+
+    // Open file to get its file descriptor (fd)
+    const fd = fs.openSync(path, 'r+');
+
+    // Write & close
+    fs.writeSync(fd, text, 0, text.length, index);
+    fs.closeSync(fd);
   }
-  else if (before) {
-    // Find as RegExp and as string
-    const match = readed.match(before);
-    const indexOf = readed.indexOf(before as string);
+  else if (mode === 'r') {
+    const replaced = file.replace(substr, data);
 
-    // If as RegExp found
-    if (match && match[0] && match.index !== -1) {
-      removeNewLine
-        ? index = match.index - 1
-        : index = match.index;
-      dataWithOffset = data + '\n';
-    }
-
-    // Else if as string found
-    else if (indexOf !== -1 && typeof before === 'string') {
-      removeNewLine
-        ? index = indexOf - 1
-        : index = indexOf;
-      dataWithOffset = data + '\n';
-    }
+    fs.writeFileSync(path, replaced, 'utf-8');
   }
+  else
+    return;
 
-  // Get file text, which would be overwriten by new
-  const substring = readed.substring(index);
-
-  // Data to insert
-  const text = Buffer.from(dataWithOffset + substring);
-
-  // Open file to get its file descriptor (fd)
-  const file = fs.openSync(path, 'r+');
-
-  // Write
-  fs.writeSync(file, text, 0, text.length, index);
-
-  // Close
-  fs.closeSync(file);
+  return read(path);
 };

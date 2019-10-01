@@ -12,7 +12,7 @@
 import { optionsDir as OD } from '../utils/config';
 
 // ====> Services
-import { read, insert, copy, isExists } from './';
+import { read, insert, copy, isExists, getSubstring } from './';
 
 /* ------------------------------------------------------------------- */
 /**
@@ -44,6 +44,7 @@ export const addMongo = async (path: string) => {
 const packageJson = (path: string) => {
   insert(path + '/package.json', pkg.types, pkg.typesAfter);
   insert(path + '/package.json', pkg.mongo, pkg.mongoAfter);
+  insert(path + '/package.json', pkg.winston, pkg.winstonAfter);
 };
 
 /* ------------------------------------------------------------------- */
@@ -101,8 +102,8 @@ const addExports = (path: string) => {
 
 const env = (path: string) => {
   // Insert before
-  insert(path + '/.env', envApi, '', envApiBefore, true);
-  insert(path + '/.env', envMongo, '', envMongoBefore, true);
+  insert(path + '/.env', envApi, envApiBefore, 'b');
+  insert(path + '/.env', envMongo, envMongoBefore, 'b');
   insert(path + '/.env', envMongoLogLevel, 'LOG_LEVEL="debug"');
 };
 
@@ -118,7 +119,7 @@ const config = (path: string) => {
   const data = read(OD.mongo + filePaths.config);
 
   insert(file, configApi, 'export const API = {');
-  insert(file, data, null, configMongoBefore);
+  insert(file, '\n' + data, configMongoBefore, 'b');
 };
 
 /* ------------------------------------------------------------------- */
@@ -144,7 +145,7 @@ const swagger = (path: string) => {
 
   const data = read(OD.mongo + filePaths.swagger);
 
-  insert(file, data, 'paths: {', null, true);
+  insert(file, '\n\n' + data, 'paths: {');
   insert(file, swaggerData, swaggerDataAfter);
 };
 
@@ -155,11 +156,30 @@ const swagger = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const addDocker = (path: string) => {
-  if (!isExists(path + '/Dockerfile'))
+  const file = path + '/docker-compose.yml';
+
+  if (!isExists(file))
     return;
 
-  insert(path + '/docker-compose.yml', dockerLinksEnv, dockerLinksEnvAfter);
-  insert(path + '/docker-compose.yml', dockerMongo);
+  const mongo = getSubstring(file, 'mongodb:');
+  const links = getSubstring(file, 'links:');
+  const env = getSubstring(file, 'environment:');
+
+  if (!mongo.start)
+    insert(file, dockerMongo);
+
+  if (!links.start && !env.start)
+    return insert(file, dockerLinksEnv, dockerLinksEnvAfter);
+
+  if (links.start)
+    insert(file, dockerLinks, 'links:');
+  else if (!links.start)
+    insert(file, dockerLinksProp + dockerLinks, dockerLinksEnvAfter);
+
+  if (env.start)
+    insert(file, dockerEnv, 'environment:');
+  else if (!env.start)
+    insert(file, dockerEnvProp + dockerEnv, dockerLinksEnvAfter);
 };
 
 /* ------------------------------------------------------------------- */
@@ -167,10 +187,12 @@ const addDocker = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const pkg = {
-  types: `    "@types/mongoose": "^5.5.7",`,
+  types: `\n    "@types/mongoose": "^5.5.7",`,
   typesAfter: /"@types\/http-status": .*?,/,
-  mongo: `    "mongoose": "^5.6.2",`,
-  mongoAfter: /"http-status": .*?,/
+  mongo: `\n    "mongoose": "^5.6.2",`,
+  mongoAfter: /"http-status": .*?,/,
+  winston: `\n    "winston-mongodb": "^5.0.0",`,
+  winstonAfter: /"typescript": .*?,/,
 };
 
 /* ------------------------------------------------------------------- */
@@ -193,17 +215,23 @@ const filePaths = {
 /* ------------------------------------------------------------------- */
 
 const exportRecords = {
-  interfaces: `export * from './ILogs';\n` +
+  interfaces: '\n' +
+    `export * from './ILogs';` +
+    '\n' +
     `export * from './ILogsController';`,
   interfacesAfter: `export * from './ILogger';`,
-  models: `export * from './CrudController';\n` +
+  models: '\n' +
+    `export * from './CrudController';` +
+    '\n' +
     `export * from './LogsModel';`,
-  controllers: `export * from './LogsController';\n` +
+  controllers: '\n' +
+    `export * from './LogsController';` +
+    '\n' +
     `export * from './MongoDB';`,
   routes: {
-    import: `import logs from './logs';`,
+    import: '\n' + `import logs from './logs';`,
     importAfter: `import info from './info';`,
-    router: `\nrouter.use(routes.LOGS.endPoint, logs);`,
+    router: '\n\n' + `router.use(routes.LOGS.endPoint, logs);`,
     routerAfter: `router.use(routes.INFO.endPoint, info);`,
   },
 };
@@ -212,9 +240,9 @@ const exportRecords = {
 /*                                .env
 /* ------------------------------------------------------------------- */
 
-const envApi = 'LOGS_ENDPOINT="/logs"';
+const envApi = 'LOGS_ENDPOINT="/logs"\n';
 
-const envApiBefore = `\
+const envApiBefore = `
 #----------------------------------------------------------------------#
 #                               ROUTES
 #----------------------------------------------------------------------#`;
@@ -229,22 +257,23 @@ MONGO_PWD="qaz12345"
 MONGO_HOST="localhost"
 MONGO_PORT="27017"
 MONGO_DB="basic_server"
-MONGO_AUTH_SOURCE="admin"`;
+MONGO_AUTH_SOURCE="admin"
+`;
 
-const envMongoBefore = `\
+const envMongoBefore = `
 #----------------------------------------------------------------------#
 #                               LOGGER
 #----------------------------------------------------------------------#`;
 
-const envMongoLogLevel = 'MONGO_LOG_LEVEL="error"';
+const envMongoLogLevel = '\nMONGO_LOG_LEVEL="error"';
 
 /* ------------------------------------------------------------------- */
 /*                        server/utils/config.ts
 /* ------------------------------------------------------------------- */
 
-const configApi = '  LOGS: process.env.API + process.env.LOGS_ENDPOINT,';
+const configApi = '\n  LOGS: process.env.API + process.env.LOGS_ENDPOINT,';
 
-const configMongoBefore = `\
+const configMongoBefore = `
 /* ------------------------------------------------------------------- */
 /*                               LOGGER
 /* ------------------------------------------------------------------- */`;
@@ -253,7 +282,7 @@ const configMongoBefore = `\
 /*                        server/utils/routes.ts
 /* ------------------------------------------------------------------- */
 
-const routesData = `\
+const routesData = `
   LOGS: {
     endPoint: API.LOGS,
     method: 'GET, DELETE'
@@ -269,7 +298,7 @@ const routesDataAfter = `\
 /*                       server/utils/swagger.ts
 /* ------------------------------------------------------------------- */
 
-const swaggerData = `\
+const swaggerData = `
     {
       name: 'LOGS',
       description: 'Provides server logs, stored in DB'
@@ -285,7 +314,18 @@ const swaggerDataAfter = `\
 /*                       docker-compose.yml
 /* ------------------------------------------------------------------- */
 
-const dockerLinksEnv = `\
+const dockerLinksProp = '\n' + `    links:`;
+const dockerLinks = '\n' + `      - mongodb:mongodb`;
+
+const dockerEnvProp = '\n' + `   environment:`;
+const dockerEnv = `
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_USER=root
+      - MONGO_PWD=rootPass2ab4e199
+      - MONGO_AUTH_SOURCE=admin`;
+
+const dockerLinksEnv = `
     links:
       - mongodb:mongodb
     environment:
@@ -294,10 +334,9 @@ const dockerLinksEnv = `\
       - MONGO_USER=root
       - MONGO_PWD=rootPass2ab4e199
       - MONGO_AUTH_SOURCE=admin`;
-
 const dockerLinksEnvAfter = 'restart: unless-stopped:0';
 
-const dockerMongo = `\
+const dockerMongo = `
   mongodb:
     image: mongo:latest
     container_name: basic-server-mongodb

@@ -70,14 +70,14 @@ const copyFiles = async (path: string) => {
 const addExports = (path: string) => {
   const source = path + '/server';
 
-  insert(
-    source + filePaths.interfaces + '/index.ts',
-    exportRecords.interfaces, null, exportRecords.interfacesBefore
-  );
-  insert(
-    source + filePaths.services + '/index.ts',
-    exportRecords.services, null, exportRecords.servicesBefore
-  );
+  // insert(
+  //   source + filePaths.interfaces + '/index.ts',
+  //   exportRecords.interfaces, null, exportRecords.interfacesBefore
+  // );
+  // insert(
+  //   source + filePaths.services + '/index.ts',
+  //   exportRecords.services, null, exportRecords.servicesBefore
+  // );
   insert(
     source + filePaths.routes + '/index.ts',
     exportRecords.routes.import, exportRecords.routes.importAfter
@@ -96,8 +96,8 @@ const addExports = (path: string) => {
 
 const env = (path: string) => {
   // Insert before
-  insert(path + '/.env', envApi, '', envApiBefore, true);
-  insert(path + '/.env', envRedis, '', envRedisBefore, true);
+  // insert(path + '/.env', envApi, '', envApiBefore, true);
+  // insert(path + '/.env', envRedis, '', envRedisBefore, true);
 
   // Insert after
   // insert(path, envApi, `SWAGGER_ENDPOINT="/swagger"`);
@@ -114,7 +114,7 @@ const config = (path: string) => {
   const file = path + '/server/utils/config.ts';
 
   insert(file, configApi, 'export const API = {');
-  insert(file, configRedis, '', configRedisBefore, true);
+  // insert(file, configRedis, '', configRedisBefore, true);
 };
 
 /* ------------------------------------------------------------------- */

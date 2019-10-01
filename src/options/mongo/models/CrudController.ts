@@ -133,6 +133,8 @@ export abstract class CrudController {
     // Specify query
     if (sort)
       query.sort = sort.split(',').join(' ');
+    if (selected)
+      query.select = selected;
     if (typeof +limit === 'number' && limit !== 'none')
       query.limit = +limit || MONGO.DEFAULT.LIMIT;
     if (typeof +skip === 'number')
