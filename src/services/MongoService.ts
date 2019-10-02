@@ -187,10 +187,10 @@ const addDocker = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const pkg = {
-  types: `\n    "@types/mongoose": "^5.5.7",`,
-  typesAfter: /"@types\/http-status": .*?,/,
   mongo: `\n    "mongoose": "^5.6.2",`,
   mongoAfter: /"http-status": .*?,/,
+  types: `\n    "@types/mongoose": "^5.5.7",`,
+  typesAfter: /"@types\/http-status": .*?,/,
   winston: `\n    "winston-mongodb": "^5.0.0",`,
   winstonAfter: /"typescript": .*?,/,
 };
@@ -200,13 +200,13 @@ const pkg = {
 /* ------------------------------------------------------------------- */
 
 const filePaths = {
+  config: '/utils/config.ts',
+  controllers: '/controllers',
   interfaces: '/interfaces',
   models: '/models',
-  services: '/services',
-  controllers: '/controllers',
-  routes: '/routes',
-  config: '/utils/config.ts',
   redisKeys: '/utils/redisKeys.ts',
+  routes: '/routes',
+  services: '/services',
   swagger: '/utils/swagger.ts',
 };
 
@@ -215,6 +215,10 @@ const filePaths = {
 /* ------------------------------------------------------------------- */
 
 const exportRecords = {
+  controllers: '\n' +
+    `export * from './LogsController';` +
+    '\n' +
+    `export * from './MongoDB';`,
   interfaces: '\n' +
     `export * from './ILogs';` +
     '\n' +
@@ -224,10 +228,6 @@ const exportRecords = {
     `export * from './CrudController';` +
     '\n' +
     `export * from './LogsModel';`,
-  controllers: '\n' +
-    `export * from './LogsController';` +
-    '\n' +
-    `export * from './MongoDB';`,
   routes: {
     import: '\n' + `import logs from './logs';`,
     importAfter: `import info from './info';`,

@@ -178,10 +178,10 @@ const addDocker = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const pkg = {
-  types: `\n    "@types/redis": "^2.8.13",`,
-  typesAfter: /"@types\/node": .*?,/,
   redis: `\n    "redis": "^2.8.0",`,
-  redisAfter: /"http-status": .*?,/
+  redisAfter: /"http-status": .*?,/,
+  types: `\n    "@types/redis": "^2.8.13",`,
+  typesAfter: /"@types\/node": .*?,/
 };
 
 /* ------------------------------------------------------------------- */
@@ -190,9 +190,9 @@ const pkg = {
 
 const filePaths = {
   interfaces: '/interfaces',
-  services: '/services',
-  routes: '/routes',
   redisKeys: '/utils/redisKeys.ts',
+  routes: '/routes',
+  services: '/services',
   swagger: '/utils/swagger.ts',
 };
 
@@ -203,14 +203,14 @@ const filePaths = {
 const exportRecords = {
   interfaces: `export * from './ICacheService';` + '\n',
   interfacesBefore: `export * from './ILogger';`,
-  services: `export * from './CacheService';` + '\n',
-  servicesBefore: `export * from './DocsApiService';`,
   routes: {
     import: '\n' + `import cache from './cache';`,
     importAfter: `import info from './info';`,
     router: '\n\n' + `router.use(routes.CACHE.endPoint, cache);`,
     routerAfter: `router.use(routes.INFO.endPoint, info);`,
   },
+  services: `export * from './CacheService';` + '\n',
+  servicesBefore: `export * from './DocsApiService';`,
 };
 
 /* ------------------------------------------------------------------- */

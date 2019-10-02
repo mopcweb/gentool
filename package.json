@@ -8,7 +8,7 @@
     "update": "ts-node updateReadme.ts",
     "dev:node": "ts-node src/index.ts",
     "dev:demon": "nodemon --config nodemon.json",
-    "copy": "cp -r src/docker lib && cp -r src/templates lib",
+    "copy": "cp -r src/options lib && cp -r src/templates lib",
     "build": "npm run lint && rm -rf lib && npm run update && tsc -p tsconfig.json && npm run copy",
     "release": "npm run build && npm publish"
   },

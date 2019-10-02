@@ -12,14 +12,14 @@
     "baseUrl": ".",
     "paths": {
       "*": [
-        "node_modules/*",
-        "app/types/*"
+        "node_modules/*"
       ]
     }
   },
   "exclude": [
     "node_modules",
     "**/templates/**",
+    "**/options/**",
     "updateReadme.ts"
   ]
 }
