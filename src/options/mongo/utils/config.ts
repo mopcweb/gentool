@@ -1,5 +1,7 @@
 /* ------------------------------------------------------------------- */
-/*                              MONGO
+/**
+ *  MongoDB config
+ */
 /* ------------------------------------------------------------------- */
 
 export const MONGO = {
@@ -30,6 +32,8 @@ export const MONGO = {
   USER: process.env.MONGO_USER,
 };
 
-// =====> Build Mongo URI
+/**
+ *  MongoDB URI
+ */
 export const MONGO_DB_URI = `mongodb://${MONGO.USER}:${MONGO.PWD}` +
   `@${MONGO.HOST}:${MONGO.PORT}/${MONGO.DB}?authSource=${MONGO.AUTH_SOURCE}`;

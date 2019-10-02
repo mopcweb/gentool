@@ -115,14 +115,13 @@ export const getSubstring = (
  *  @param [substr] - String | RegExp, by which to get substring to define
  *  insert position
  *  @param [mode='a'] - Defines mode: after substr, before or replace
- *  @param [removeNewLine=false] - Whether to remove empty newLine
- *  after / before insertion position. TO BE REMOVED
+ *  @param [returnFile=false] - Whether to return updated file
  */
 /* ------------------------------------------------------------------- */
 
 export const insert = (
   path: string, data: any, substr?: string | RegExp,
-  mode: 'a' | 'b' | 'r' = 'a', removeNewLine = false
+  mode: 'a' | 'b' | 'r' = 'a', returnFile = false
 ) => {
   // Read file
   const file = read(path);
@@ -137,13 +136,9 @@ export const insert = (
     const { start, end } = getSubstring(path, substr, file);
 
     if (mode === 'a' && end)
-      removeNewLine
-        ? index = end + 1
-        : index = end;
+      index = end;
     else if (mode === 'b' && start)
-      removeNewLine
-        ? index = start - 1
-        : index = start;
+      index = start;
 
     // Get file text, which would be overwriten by new
     const substring = file.substring(index);
@@ -166,5 +161,6 @@ export const insert = (
   else
     return;
 
-  return read(path);
+  if (returnFile)
+    return read(path);
 };

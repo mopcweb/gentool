@@ -1,13 +1,14 @@
 /* ################################################################### */
 /*
-/*  This API is provided with purpose to provide logs
+/*  This API is provided with purpose to provide explicit responses
+/*  for all error requests
 /*
 /* ################################################################### */
 
 import * as express from 'express';
 
 /**
- *   Logs API
+ *   Handles error requests
  */
 const router = express.Router();
 
@@ -15,35 +16,27 @@ const router = express.Router();
 /*                              Config
 /* ------------------------------------------------------------------- */
 
-// =====> Controllers
-import { LogsController } from '../controllers';
+// =====> Routes
+import { routes as endPoints } from '../utils/routes';
 
 // =====> Services
 import { send } from '../services';
 
 /* ------------------------------------------------------------------- */
-/*                                GET
+/*                           Handle errors
 /* ------------------------------------------------------------------- */
 
-router.get('/:id?', async (req, res) => {
-  const { query, params } = req;
-  const { id } = params;
+router.all('/*', (req, res) => {
+  // Response
+  /* tslint:disable */
+  const response = {
+    message: 'Consider using one of provided API endPoints',
+    endPoints
+  };
+  /* tslint:enable */
 
-  const logs = await new LogsController().read(query, id);
-
-  send.ok(req, res, logs);
-});
-
-/* ------------------------------------------------------------------- */
-/*                              DELETE
-/* ------------------------------------------------------------------- */
-
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  const record = await new LogsController().delete(id);
-
-  send.ok(req, res, record);
+  // Send res
+  send.notFound(req, res, response);
 });
 
 /* ------------------------------------------------------------------- */

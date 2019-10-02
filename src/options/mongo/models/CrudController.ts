@@ -13,14 +13,11 @@ import { Model } from 'mongoose';
 // =====> Config
 import { MONGO } from '../utils/config';
 
-// =====> StatusCodes
-import { NOT_FOUND, BAD_REQUEST, CONFLICT } from 'http-status';
-
 // =====> Controllers
 import { MongoDB } from '../controllers';
 
 // =====> Services
-import { msg, logger } from '../services';
+import { msg, logger, parseTypes } from '../services';
 
 /* ------------------------------------------------------------------- */
 /**
@@ -47,7 +44,7 @@ export abstract class CrudController {
 
     const model: Model<any> = Models.data[modelName];
     if (!model)
-      return msg(BAD_REQUEST, 'Incorrect model');
+      return msg.badRequest('Incorrect model');
 
     // Delete _id if it is
     if (body._id)
@@ -58,8 +55,8 @@ export abstract class CrudController {
       .create(body)
       .catch((err: any) =>
         err && err.errmsg.indexOf('duplicate key error') !== -1
-          ? msg(CONFLICT, err)
-          : msg(BAD_REQUEST, err));
+          ? msg.conflict(err)
+          : msg.badRequest(err));
 
     // Close connection
     MongoDB.close();
@@ -89,10 +86,12 @@ export abstract class CrudController {
 
     const model: Model<any> = Models.data[modelName];
     if (!model)
-      return msg(BAD_REQUEST, 'Incorrect model');
+      return msg.badRequest('Incorrect model');
 
     // Get necessary options
-    const { limit, skip, getBy = MONGO.DEFAULT.GET_BY, sort, select } = options;
+    const {
+      limit, skip, getBy = MONGO.DEFAULT.GET_BY, sort, select, filter, where
+    } = options;
 
     // Vars for value and amount
     let value: any;
@@ -114,12 +113,12 @@ export abstract class CrudController {
         .then(profiles => profiles
           ? profiles
           : typeof id === 'string' || typeof id === 'number'
-            ? msg(NOT_FOUND, 'Item not found')
-            : msg(NOT_FOUND, 'Item not found under provided conditions'))
+            ? msg.notFound('Item not found')
+            : msg.notFound('Item not found under provided conditions'))
         .catch(err =>
           err && err.name === 'CastError' && err.kind === 'ObjectId'
-            ? msg(BAD_REQUEST, 'Incorrect id provided')
-            : msg(BAD_REQUEST, err));
+            ? msg.badRequest('Incorrect id provided')
+            : msg.badRequest(err));
 
       // Close connection
       MongoDB.close();
@@ -140,13 +139,40 @@ export abstract class CrudController {
     if (typeof +skip === 'number')
       query.skip = +skip || MONGO.DEFAULT.SKIP;
 
+    // Where conditions object, parsed from 'filter' query param
+    let whereConditions: any = { };
+
+    // Parse
+    if (filter) {
+      const splited = filter.split(',');
+      let i = 0;
+
+      while (i <= splited.length) {
+        if (splited[i + 1] && splited[i + 1].indexOf('$') !== -1) {
+          whereConditions[splited[i]] = {
+            [splited[i + 1]]: splited[i + 2]
+          };
+
+          i++;
+        }
+        else if (splited[i])
+          whereConditions[splited[i]] = splited[i + 1];
+
+        i += 2;
+      }
+    }
+
+    // If where, update whereConditions
+    if (where)
+      whereConditions = { ...whereConditions, ...where };
+
     // Find all items
     await model
-      .find({ }, null, query)
+      .find({ ...parseTypes(whereConditions) }, null, query)
       .then(profiles => profiles && profiles.length
         ? value = profiles
-        : value = msg(NOT_FOUND, 'Items not found'))
-      .catch(err => value = msg(BAD_REQUEST, err));
+        : value = msg.notFound('Items not found'))
+      .catch(err => value = msg.badRequest(err));
 
     // If error -> close connection & return error
     if (value && value.status && value.status >= 400) {
@@ -196,7 +222,7 @@ export abstract class CrudController {
 
     const model: Model<any> = Models.data[modelName];
     if (!model)
-      return msg(BAD_REQUEST, 'Incorrect model');
+      return msg.badRequest('Incorrect model');
 
     // If id is object -> update many, else -> by id
     const response: any = id && typeof id === 'object'
@@ -207,21 +233,21 @@ export abstract class CrudController {
             return res.n !== 0
               ? `Successfully updated: ${res.n} items`
               : id && (typeof id === 'string' || typeof id === 'number')
-                ? msg(BAD_REQUEST, 'Incorrect id provided')
-                : msg(BAD_REQUEST, 'Incorrect conditions provided');
+                ? msg.badRequest('Incorrect id provided')
+                : msg.badRequest('Incorrect conditions provided');
           })
-          .catch((err: any) => msg(BAD_REQUEST, err))
+          .catch((err: any) => msg.badRequest(err))
       : await model
           .findOneAndUpdate(
             { _id: id },
             { $set: body },
             { new: true, runValidators: true }
           )
-          .then(res => res ? res : msg(BAD_REQUEST, 'Incorrect id provided'))
+          .then(res => res ? res : msg.badRequest('Incorrect id provided'))
           .catch((err: any) =>
             err && err.name === 'CastError' && err.kind === 'ObjectId'
-              ? msg(BAD_REQUEST, 'Incorrect id provided')
-              : msg(BAD_REQUEST, err));
+              ? msg.badRequest('Incorrect id provided')
+              : msg.badRequest(err));
 
     // Return
     return response;
@@ -246,7 +272,7 @@ export abstract class CrudController {
 
     const model: Model<any> = Models.data[modelName];
     if (!model)
-      return msg(BAD_REQUEST, 'Incorrect model');
+      return msg.badRequest('Incorrect model');
 
     // Filter
     let where: any;
@@ -265,9 +291,9 @@ export abstract class CrudController {
       .then(res => res.n !== 0
         ? `Successfully deleted: ${res.n} items`
         : id && (typeof id === 'string' || typeof id === 'number')
-          ? msg(BAD_REQUEST, 'Incorrect id provided')
-          : msg(BAD_REQUEST, 'Incorrect conditions provided'))
-      .catch((err: any) => msg(BAD_REQUEST, err));
+          ? msg.badRequest('Incorrect id provided')
+          : msg.badRequest('Incorrect conditions provided'))
+      .catch((err: any) => msg.badRequest(err));
 
     // Return
     return response;

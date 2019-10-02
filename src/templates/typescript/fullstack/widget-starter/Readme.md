@@ -1,4 +1,10 @@
-# GenTool Client Starter
+# GenTool Widget Starter
+
+## Notes
+
+In order for AWS authoriztion to work correctly do not forget to provide valid data in:
+  - AWS config section in .env (root dir)
+  - config.service.ts (client dir)
 
 ## Develop
 

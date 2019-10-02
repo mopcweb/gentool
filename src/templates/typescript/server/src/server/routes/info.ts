@@ -1,13 +1,14 @@
 /* ################################################################### */
 /*
-/*  This API is provided with purpose to provide logs
+/*  This API is provided with purpose to provide current server version
+/*  and instance
 /*
 /* ################################################################### */
 
 import * as express from 'express';
 
 /**
- *   Logs API
+ *   Info API. Current server info
  */
 const router = express.Router();
 
@@ -15,8 +16,11 @@ const router = express.Router();
 /*                              Config
 /* ------------------------------------------------------------------- */
 
-// =====> Controllers
-import { LogsController } from '../controllers';
+// =====> Config
+import {
+  VERSION as version, INSTANCE as instance,
+  COMMIT as commit, DATE_TIME as dateTime
+} from '../utils/config';
 
 // =====> Services
 import { send } from '../services';
@@ -25,25 +29,12 @@ import { send } from '../services';
 /*                                GET
 /* ------------------------------------------------------------------- */
 
-router.get('/:id?', async (req, res) => {
-  const { query, params } = req;
-  const { id } = params;
+router.get('/', (req, res) => {
+  // Server info
+  const info = { instance, version, commit, dateTime };
 
-  const logs = await new LogsController().read(query, id);
-
-  send.ok(req, res, logs);
-});
-
-/* ------------------------------------------------------------------- */
-/*                              DELETE
-/* ------------------------------------------------------------------- */
-
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  const record = await new LogsController().delete(id);
-
-  send.ok(req, res, record);
+  // Send res
+  send.ok(req, res, info);
 });
 
 /* ------------------------------------------------------------------- */

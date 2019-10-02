@@ -22,13 +22,7 @@
         operationId: 'getCacheRecord',
         parameters: [
           ...authHeader,
-          {
-            in: 'path',
-            name: 'key',
-            description: 'Record key',
-            schema: { type: 'string' },
-            required: false
-          },
+          param.path('key', 'Record key', null, true)
         ],
         responses: responses({
           url: `${API.CACHE.ROOT}/{key}`,
@@ -45,13 +39,7 @@
         operationId: 'deleteCache',
         parameters: [
           ...authHeader,
-          {
-            in: 'path',
-            name: 'key',
-            description: 'Record key',
-            schema: { type: 'string' },
-            required: false
-          },
+          param.path('key', 'Record key', null, true)
         ],
         responses: responses({
           url: `${API.CACHE.ROOT}/delete/{key}`,

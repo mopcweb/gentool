@@ -15,7 +15,9 @@ import { ILogsController } from '../interfaces';
 import { CrudController } from '../models';
 
 /* ------------------------------------------------------------------- */
-/*                             Controller
+/**
+ *  MongoDB Logs Controller
+ */
 /* ------------------------------------------------------------------- */
 
 export class LogsController extends CrudController implements ILogsController {

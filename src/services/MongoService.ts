@@ -101,7 +101,6 @@ const addExports = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const env = (path: string) => {
-  // Insert before
   insert(path + '/.env', envApi, envApiBefore, 'b');
   insert(path + '/.env', envMongo, envMongoBefore, 'b');
   insert(path + '/.env', envMongoLogLevel, 'LOG_LEVEL="debug"');
@@ -145,7 +144,7 @@ const swagger = (path: string) => {
 
   const data = read(OD.mongo + filePaths.swagger);
 
-  insert(file, '\n\n' + data, 'paths: {');
+  insert(file, '\n' + data, 'paths: {\n');
   insert(file, swaggerData, swaggerDataAfter);
 };
 
@@ -156,30 +155,31 @@ const swagger = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const addDocker = (path: string) => {
-  const file = path + '/docker-compose.yml';
+  const source = path + '/docker-compose.yml';
 
-  if (!isExists(file))
+  if (!isExists(source))
     return;
 
-  const mongo = getSubstring(file, 'mongodb:');
-  const links = getSubstring(file, 'links:');
-  const env = getSubstring(file, 'environment:');
+  const file = read(source);
+  const mongo = getSubstring(source, 'mongodb:', file);
+  const links = getSubstring(source, 'links:', file);
+  const env = getSubstring(source, 'environment:', file);
 
   if (!mongo.start)
-    insert(file, dockerMongo);
+    insert(source, dockerMongo);
 
   if (!links.start && !env.start)
-    return insert(file, dockerLinksEnv, dockerLinksEnvAfter);
+    return insert(source, dockerLinksEnv, dockerLinksEnvAfter);
 
   if (links.start)
-    insert(file, dockerLinks, 'links:');
+    insert(source, dockerLinks, 'links:');
   else if (!links.start)
-    insert(file, dockerLinksProp + dockerLinks, dockerLinksEnvAfter);
+    insert(source, dockerLinksProp + dockerLinks, dockerLinksEnvAfter);
 
   if (env.start)
-    insert(file, dockerEnv, 'environment:');
+    insert(source, dockerEnv, 'environment:');
   else if (!env.start)
-    insert(file, dockerEnvProp + dockerEnv, dockerLinksEnvAfter);
+    insert(source, dockerEnvProp + dockerEnv, dockerLinksEnvAfter);
 };
 
 /* ------------------------------------------------------------------- */
@@ -345,8 +345,9 @@ const dockerMongo = `
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=rootPass2ab4e199
       - MONGO_INITDB_ROOT_DATABASE=admin
-    expose:
-      - 27017
     ports:
       - "27017:27017"
-    command: mongod --auth`;
+    expose:
+      - 27017
+    command: mongod --auth
+`;

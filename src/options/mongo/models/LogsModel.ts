@@ -17,7 +17,9 @@ import { MONGO } from '../utils/config';
 import { ILogs } from '../interfaces';
 
 /* ------------------------------------------------------------------- */
-/*                             Schema
+/**
+ *  MongoDB Logs Schema
+ */
 /* ------------------------------------------------------------------- */
 
 export const LogsSchema = new Schema(
@@ -29,7 +31,9 @@ export const LogsSchema = new Schema(
 );
 
 /* ------------------------------------------------------------------- */
-/*                             Model
+/**
+ *  MongoDB Logs Model
+ */
 /* ------------------------------------------------------------------- */
 
 export const LogsModel = model<ILogs>(MONGO.COLLECTIONS.LOGS, LogsSchema);

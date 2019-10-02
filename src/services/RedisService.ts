@@ -12,7 +12,7 @@
 import { optionsDir as OD } from '../utils/config';
 
 // ====> Services
-import { read, insert, copy, isExists } from './';
+import { read, insert, copy, isExists, getSubstring } from './';
 
 /* ------------------------------------------------------------------- */
 /**
@@ -70,14 +70,14 @@ const copyFiles = async (path: string) => {
 const addExports = (path: string) => {
   const source = path + '/server';
 
-  // insert(
-  //   source + filePaths.interfaces + '/index.ts',
-  //   exportRecords.interfaces, null, exportRecords.interfacesBefore
-  // );
-  // insert(
-  //   source + filePaths.services + '/index.ts',
-  //   exportRecords.services, null, exportRecords.servicesBefore
-  // );
+  insert(
+    source + filePaths.interfaces + '/index.ts',
+    exportRecords.interfaces, exportRecords.interfacesBefore, 'b'
+  );
+  insert(
+    source + filePaths.services + '/index.ts',
+    exportRecords.services, exportRecords.servicesBefore, 'b'
+  );
   insert(
     source + filePaths.routes + '/index.ts',
     exportRecords.routes.import, exportRecords.routes.importAfter
@@ -95,13 +95,8 @@ const addExports = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const env = (path: string) => {
-  // Insert before
-  // insert(path + '/.env', envApi, '', envApiBefore, true);
-  // insert(path + '/.env', envRedis, '', envRedisBefore, true);
-
-  // Insert after
-  // insert(path, envApi, `SWAGGER_ENDPOINT="/swagger"`);
-  // insert(path, envRedis, 'HEALTH_ENDPOINT="/health.html"');
+  insert(path + '/.env', envApi, envApiBefore, 'b');
+  insert(path + '/.env', envRedis, envRedisBefore, 'b');
 };
 
 /* ------------------------------------------------------------------- */
@@ -114,7 +109,7 @@ const config = (path: string) => {
   const file = path + '/server/utils/config.ts';
 
   insert(file, configApi, 'export const API = {');
-  // insert(file, configRedis, '', configRedisBefore, true);
+  insert(file, configRedis, configRedisBefore, 'b');
 };
 
 /* ------------------------------------------------------------------- */
@@ -140,7 +135,7 @@ const swagger = (path: string) => {
 
   const data = read(OD.redis + filePaths.swagger);
 
-  insert(file, data, 'paths: {', null, true);
+  insert(file, '\n' + data, 'paths: {\n');
   insert(file, swaggerData, swaggerDataAfter);
 };
 
@@ -151,11 +146,31 @@ const swagger = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const addDocker = (path: string) => {
-  if (!isExists(path + '/Dockerfile'))
+  const source = path + '/docker-compose.yml';
+
+  if (!isExists(source))
     return;
 
-  insert(path + '/docker-compose.yml', dockerLinksEnv, dockerLinksEnvAfter);
-  insert(path + '/docker-compose.yml', dockerRedis);
+  const file = read(source);
+  const redis = getSubstring(source, 'redisdb:', file);
+  const links = getSubstring(source, 'links:', file);
+  const env = getSubstring(source, 'environment:', file);
+
+  if (!redis.start)
+    insert(source, dockerRedis);
+
+  if (!links.start && !env.start)
+    return insert(source, dockerLinksEnv, dockerLinksEnvAfter);
+
+  if (links.start)
+    insert(source, dockerLinks, 'links:');
+  else if (!links.start)
+    insert(source, dockerLinksProp + dockerLinks, dockerLinksEnvAfter);
+
+  if (env.start)
+    insert(source, dockerEnv, 'environment:');
+  else if (!env.start)
+    insert(source, dockerEnvProp + dockerEnv, dockerLinksEnvAfter);
 };
 
 /* ------------------------------------------------------------------- */
@@ -163,9 +178,9 @@ const addDocker = (path: string) => {
 /* ------------------------------------------------------------------- */
 
 const pkg = {
-  types: `    "@types/redis": "^2.8.13",`,
+  types: `\n    "@types/redis": "^2.8.13",`,
   typesAfter: /"@types\/node": .*?,/,
-  redis: `    "redis": "^2.8.0",`,
+  redis: `\n    "redis": "^2.8.0",`,
   redisAfter: /"http-status": .*?,/
 };
 
@@ -186,14 +201,14 @@ const filePaths = {
 /* ------------------------------------------------------------------- */
 
 const exportRecords = {
-  interfaces: `export * from './ICacheService';`,
+  interfaces: `export * from './ICacheService';` + '\n',
   interfacesBefore: `export * from './ILogger';`,
-  services: `export * from './CacheService';`,
+  services: `export * from './CacheService';` + '\n',
   servicesBefore: `export * from './DocsApiService';`,
   routes: {
-    import: `import cache from './cache';`,
+    import: '\n' + `import cache from './cache';`,
     importAfter: `import info from './info';`,
-    router: `\nrouter.use(routes.CACHE.endPoint, cache);`,
+    router: '\n\n' + `router.use(routes.CACHE.endPoint, cache);`,
     routerAfter: `router.use(routes.INFO.endPoint, info);`,
   },
 };
@@ -204,9 +219,10 @@ const exportRecords = {
 
 const envApi = `\
 CACHE_ENDPOINT = "/cache"
-CACHE_CLEAR_ENDPOINT="/clear"`;
+CACHE_CLEAR_ENDPOINT="/clear"
+`;
 
-const envApiBefore = `\
+const envApiBefore = `
 #----------------------------------------------------------------------#
 #                               ROUTES
 #----------------------------------------------------------------------#`;
@@ -220,9 +236,10 @@ REDIS_URL = "redis://localhost:6301"
 # REDIS_PWD = "someAwesomeRedisPwd6301"
 
 # Seconds (24 hours = (24 * 60 * 60) s)
-CACHE_EXPIRATION=86400`;
+CACHE_EXPIRATION=86400
+`;
 
-const envRedisBefore = `\
+const envRedisBefore = `
 #----------------------------------------------------------------------#
 #                               LOGGER
 #----------------------------------------------------------------------#`;
@@ -231,7 +248,7 @@ const envRedisBefore = `\
 /*                        server/utils/config.ts
 /* ------------------------------------------------------------------- */
 
-const configApi = `\
+const configApi = `
   CACHE: {
     CLEAR: process.env.CACHE_CLEAR_ENDPOINT,
     ROOT: process.env.API + process.env.CACHE_ENDPOINT
@@ -244,9 +261,10 @@ const configRedis = `
 
 export const REDIS_URL = process.env.REDIS_URL;
 export const REDIS_PWD = process.env.REDIS_PWD;
-export const CACHE_EXPIRATION = +process.env.CACHE_EXPIRATION;`;
+export const CACHE_EXPIRATION = +process.env.CACHE_EXPIRATION;
+`;
 
-const configRedisBefore = `\
+const configRedisBefore = `
 /* ------------------------------------------------------------------- */
 /*                               LOGGER
 /* ------------------------------------------------------------------- */`;
@@ -255,15 +273,15 @@ const configRedisBefore = `\
 /*                        server/utils/routes.ts
 /* ------------------------------------------------------------------- */
 
-const routesData = `\
+const routesData = `
   CACHE: {
     endPoint: API.CACHE.ROOT,
     method: 'GET'
   },`;
 
 const routesDataAfter = `\
-  HEALTH: {
-    endPoint: ROUTES.HEALTH,
+  INFO: {
+    endPoint: API.INFO,
     method: 'GET'
   },`;
 
@@ -271,7 +289,7 @@ const routesDataAfter = `\
 /*                       server/utils/swagger.ts
 /* ------------------------------------------------------------------- */
 
-const swaggerData = `\
+const swaggerData = `
     {
       name: 'CACHE',
       description: 'Provides ability to get cache (all records or by key), ' +
@@ -288,22 +306,30 @@ const swaggerDataAfter = `\
 /*                       docker-compose.yml
 /* ------------------------------------------------------------------- */
 
-const dockerLinksEnv = `\
-    links:
-      - redis:redis
-    environment:
-      - REDIS_URL=redis://redis:6301
+const dockerLinksProp = '\n\n' + `    links:`;
+const dockerLinks = '\n' + `      - redisdb:redisdb`;
+
+const dockerEnvProp = '\n' + `   environment:`;
+const dockerEnv = `
+      - REDIS_URL=redis://redisdb:6301
       - REDIS_PWD=redisPassw0rd42t34t4gr`;
 
+const dockerLinksEnv = `
+    links:
+      - redisdb:redisdb
+    environment:
+      - REDIS_URL=redis://redisdb:6301
+      - REDIS_PWD=redisPassw0rd42t34t4gr`;
 const dockerLinksEnvAfter = 'restart: unless-stopped:0';
 
-const dockerRedis = `\
-  redis:
+const dockerRedis = `
+  redisdb:
     image: redis:alpine
-    container_name: basic-server-redis
+    container_name: basic-server-redisdb
     restart: unless-stopped:0
-    command: redis-server --port 6301 --requirepass redisPassw0rd42t34t4gr
+    ports:
+      - "6301:6301"
     expose:
       - 6301
-    ports:
-      - "6301:6301"`;
+    command: redis-server --port 6301 --requirepass redisPassw0rd42t34t4gr
+`;

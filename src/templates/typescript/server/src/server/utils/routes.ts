@@ -1,35 +1,38 @@
 /* ################################################################### */
 /*
-/*  Service which clears console & provides tool name
+/*  App routes
 /*
 /* ################################################################### */
 
 /* tslint:disable */
 
-import chalk from 'chalk';
-import * as figlet from 'figlet';
-const clear = require('clear');
-
-/* tslint:enable */
-
-/* ------------------------------------------------------------------- */
-/*                                Config
-/* ------------------------------------------------------------------- */
-
-import { title, version } from '../utils/config';
+import { API, ROUTES } from './config';
 
 /* ------------------------------------------------------------------- */
 /**
- *  Clears console & shows package title + version
+ *  Methods, which are implemented by server
  */
 /* ------------------------------------------------------------------- */
 
-export const start = () => {
-  clear();
+export const methods = 'POST, GET, PUT, DELETE';
 
-  console.log(
-    chalk.yellow(figlet.textSync(
-      `${title} ${version}`, { horizontalLayout: 'full' })
-    )
-  );
+/* ------------------------------------------------------------------- */
+/**
+ *  App routes object for router & showApiDocs Table
+ */
+/* ------------------------------------------------------------------- */
+
+export const routes = {
+  HEALTH: {
+    endPoint: ROUTES.HEALTH,
+    method: 'GET'
+  },
+  INFO: {
+    endPoint: API.INFO,
+    method: 'GET'
+  },
+  SWAGGER: {
+    endPoint: API.SWAGGER,
+    method: 'GET'
+  }
 };

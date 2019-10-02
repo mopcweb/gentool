@@ -108,10 +108,11 @@ const defineColor = (level: string, title: string) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                  Create winston logger instance
+/**
+ *  Custom winston logger, for generating pretty logs over app
+ */
 /* ------------------------------------------------------------------- */
 
-// Create logger
 const logger: ILogger = createLogger({
   level,
   silent,

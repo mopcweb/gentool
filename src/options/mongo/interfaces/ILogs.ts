@@ -7,7 +7,9 @@
 import { Document } from 'mongoose';
 
 /* ------------------------------------------------------------------- */
-/*                            Interface
+/**
+ *  Interface for MongoDB LogsModel
+ */
 /* ------------------------------------------------------------------- */
 
 export interface ILogs extends Document {

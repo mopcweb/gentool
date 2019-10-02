@@ -4,17 +4,11 @@
 /*
 /* ################################################################### */
 
-import * as fs from 'fs';
-import { promisify } from 'util';
 import * as inquirer from 'inquirer';
-import { ncp } from 'ncp';
 
 /* ------------------------------------------------------------------- */
 /*                               Config
 /* ------------------------------------------------------------------- */
-
-// Make ncp an async function
-const ncpAsync = promisify(ncp);
 
 // =====> Config
 import {
@@ -23,12 +17,13 @@ import {
 
 // =====> Services
 import {
-  questions, dirsObject as options, finish, addRedis, addMongo, copy, insert,
-  isExists
+  questions, finish, addRedis, addMongo, copy, insert, isExists
 } from './';
 
 /* ------------------------------------------------------------------- */
-/*                            Ask in console
+/**
+ *  Enables quiz in console
+ */
 /* ------------------------------------------------------------------- */
 
 export const prompt = () => inquirer.prompt(questions)
@@ -39,7 +34,11 @@ export const prompt = () => inquirer.prompt(questions)
   });
 
 /* ------------------------------------------------------------------- */
-/*                            Create client
+/**
+ *  Creates client project from template
+ *
+ *  @param answers - Quiz answers
+ */
 /* ------------------------------------------------------------------- */
 
 const createClient = async (answers: inquirer.Answers) => {
@@ -100,8 +99,8 @@ const createServer = async (answers: inquirer.Answers) => {
 
   // Choose basic server path
   const template = root === 'Project'
-    ? `${langsDir}/${lang}/${choice}/basic`
-    : `${langsDir}/${lang}/${choice}/basic/src`;
+    ? `${langsDir}/${lang}/${choice}`
+    : `${langsDir}/${lang}/${choice}/src`;
 
   // Create new project path
   const project = `${dir}/${title}`;
@@ -125,7 +124,11 @@ const createServer = async (answers: inquirer.Answers) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                            Create client
+/**
+ *  Creates fullstack project from template
+ *
+ *  @param answers - Quiz answers
+ */
 /* ------------------------------------------------------------------- */
 
 const createFullstack = async (answers: inquirer.Answers) => {
@@ -155,30 +158,6 @@ const createFullstack = async (answers: inquirer.Answers) => {
 };
 
 /* ------------------------------------------------------------------- */
-/*                          Add Redis / MongoDB
-/* ------------------------------------------------------------------- */
-
-// const addDbs = (path: string, redis: string, db: string) => {
-//   // Choose basic template
-//   let template = options(path).basic;
-//
-//   // Choose redis template
-//   if (redis === 'Yes' && db === 'None')
-//     template = options(path).redis;
-//
-//   // Choose mongo template
-//   if (db === 'MongoDB' && redis === 'No')
-//     template = options(path).mongo;
-//
-//   // Choose redis + mongo template
-//   if (redis === 'Yes' && db === 'MongoDB')
-//     template = options(path).redis_mongo;
-//
-//   // Return
-//   return template;
-// };
-
-/* ------------------------------------------------------------------- */
 /**
  *  Adds Docker
  *
@@ -191,22 +170,6 @@ const addDocker = async (path: string) => {
 
   await copy(optionsDir.docker, destination);
 };
-
-// const addDocker = async (path: string, redis: string, db: string) => {
-//   // Basic docker option
-//   let dockerOption = options(dockerDir).basic;
-//
-//   // Define docker option
-//   if (redis === 'Yes' && db === 'None')
-//     dockerOption = options(dockerDir).redis;
-//   if (db === 'MongoDB' && redis === 'No')
-//     dockerOption = options(dockerDir).mongo;
-//   if (redis === 'Yes' && db === 'MongoDB')
-//     dockerOption = options(dockerDir).redis_mongo;
-//
-//   // Copy docker files
-//   await copy(dockerOption, path);
-// };
 
 /* ------------------------------------------------------------------- */
 /**

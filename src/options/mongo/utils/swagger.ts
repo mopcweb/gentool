@@ -6,7 +6,7 @@
         tags: ['LOGS'],
         summary: 'Get all logs',
         operationId: 'getLogs',
-        parameters: [ ...authHeader, ...commonGetParams ],
+        parameters: [ ...authHeader, ...commonGetParams(['include']) ],
         responses: responses({
           url: API.LOGS,
           ok: [
@@ -35,14 +35,8 @@
         operationId: 'getLogById',
         parameters: [
           ...authHeader,
-          ...commonGetParams,
-          {
-            in: 'path',
-            name: 'id',
-            description: 'Log id',
-            schema: { type: 'string' },
-            required: true
-          },
+          param.path('id', 'Log id', null, true),
+          ...commonGetParams(['include']),
         ],
         responses: responses({
           url: `${API.LOGS}/{id}`,
@@ -70,14 +64,7 @@
         operationId: 'deleteLogById',
         parameters: [
           ...authHeader,
-          ...commonGetParams,
-          {
-            in: 'path',
-            name: 'id',
-            description: 'Log id',
-            schema: { type: 'string' },
-            required: true
-          },
+          param.path('id', 'Log id', null, true)
         ],
         responses: responses({
           url: `${API.LOGS}/{id}`,

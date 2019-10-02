@@ -24,7 +24,9 @@ import {
 /* tslint:disable */
 
 export const questions: Questions = [
+
   /* ********************** GENERAL QUESTIONS  ********************** */
+
   {
     name: questionTitles.title,
     type: 'input',
@@ -60,11 +62,11 @@ export const questions: Questions = [
     type: 'list',
     when: res => res[questionTitles.lang] === 'typescript' ? true : false,
     message: 'What project would you like to generate?',
-    // choices: tsTemplates
-    choices: ['server']
+    choices: tsTemplates
   },
 
   /* ********************** CLIENT QUESTIONS  *********************** */
+
   {
     name: questionTitles.framework,
     type: 'list',
@@ -82,6 +84,7 @@ export const questions: Questions = [
   // },
 
   /* ******************** CLIENT & NEW QUESTIONS  ******************** */
+
   // {
   //   name: questionTitles.router,
   //   type: 'list',
@@ -106,6 +109,7 @@ export const questions: Questions = [
   // },
 
   /* ***************** CLIENT & TEMPLATE QUESTIONS  ****************** */
+
   {
     name: questionTitles.clientTemplate,
     type: 'list',
@@ -132,6 +136,7 @@ export const questions: Questions = [
   },
 
   /* ********************** SERVER QUESTIONS  ********************** */
+
   {
     name: questionTitles.redis,
     type: 'list',
@@ -155,6 +160,7 @@ export const questions: Questions = [
   },
 
   /* ******************** FULLSTACK QUESTIONS  ********************* */
+
   {
     name: questionTitles.fullstackTemplate,
     type: 'list',

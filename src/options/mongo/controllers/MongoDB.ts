@@ -13,17 +13,16 @@ import { connect, connection, Connection } from 'mongoose';
 // =====> Config
 import { MONGO, MONGO_DB_URI } from '../utils/config';
 
-// =====> StatusCodes
-import { GATEWAY_TIMEOUT } from 'http-status';
-
 // =====> Models
 import { LogsModel } from '../models';
 
 // =====> Services
-import { logger, notify } from '../services';
+import { logger, msg } from '../services';
 
 /* ------------------------------------------------------------------- */
-/*                             Controller
+/**
+ *  MongoDB Connection Controller
+ */
 /* ------------------------------------------------------------------- */
 
 export class MongoDB {
@@ -64,7 +63,7 @@ export class MongoDB {
     if (!MongoDB.instance || !MongoDB.instance.db)
       return MongoDB.init();
 
-    return Promise.resolve(notify.ok(MongoDB.instance.models));
+    return Promise.resolve(msg.ok(MongoDB.instance.models));
   }
 
   /* ------------------------------------------------------------------- */
@@ -93,7 +92,7 @@ export class MongoDB {
     if (!MongoDB.instance.db.readyState)
       return MongoDB.instance.error(error);
 
-    return notify.ok(MongoDB.instance.models);
+    return msg.ok(MongoDB.instance.models);
   }
 
   /* ------------------------------------------------------------------- */
@@ -118,6 +117,6 @@ export class MongoDB {
 
     MongoDB.close();
 
-    return notify.gatewayTimeout(error);
+    return msg.gatewayTimeout(error);
   }
 }

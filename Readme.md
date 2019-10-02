@@ -6,7 +6,7 @@
 
 Tool creates basic structure for new project.
 
-For now creates anything in TypeScript.
+For now supports only TypeScript.
 
 Plans for future:
 
@@ -33,12 +33,6 @@ gentool
 npx gentool
 ```
 
-##	Prerequisites
-
-For Windows users:
-
- - Use tool in some bash (cmder, Git bash, etc...)
-
 ## Variants
 
 ### Server Templates
@@ -48,7 +42,7 @@ Creates basic server.
 _Options_:
 
  - Redis
- - Database (For now only Mongo)
+ - Database (For now only MongoDB)
  - Docker
 
 _Structure for basic server:_
@@ -60,29 +54,33 @@ _Structure for basic server:_
 │   │	│   └── index.ts
 │   │   ├── interfaces
 │   │	│   ├── IMsg.ts
-│   │	│	└── index.ts
+│   │	│	  └── index.ts
 │   │   ├── middlewares
 │   │	│   ├── checkMethod.ts
 │   │	│   ├── index.ts
-│   │	│	└── setHeaders.ts
+│   │	│   ├── parseRequest.ts
+│   │	│	  └── setHeaders.ts
 │   │   ├── models
 │   │	│   └── index.ts
 │   │   ├── routes
 │   │	│   ├── error.ts
 │   │	│   ├── health.ts
 │   │	│   ├── index.ts
-│   │	│	└── info.ts
+│   │	│	  └── info.ts
 │   │   ├── services
 │   │	│   ├── DocsApiService.ts
 │   │	│   ├── Helpers.ts
 │   │	│   ├── index.ts
 │   │	│   ├── LoggerService.ts
-│   │	│	└── ResponseService.ts
+│   │	│   ├── RequestContextService.ts
+│   │	│	  └── ResponseService.ts
 │   │   ├── utils
 │   │	│   ├── config.ts
 │   │	│   ├── constants.ts
 │   │	│   ├── health.html
-│   │	│	└── routes.ts
+│   │	│   ├── swagger.ts
+│   │	│   ├── swaggerHelpers.ts
+│   │	│	  └── routes.ts
 │   │	└── index.ts
 │   ├── .env
 │   ├── nodemon.json
@@ -96,22 +94,23 @@ _Structure for basic server:_
 
 _For RedisDB option there is also:_
 
- - CacheService.ts (set, get, del, clear dbs)
- - API for cache clear
+ - CacheService.ts (set, get, del, getAll, clear dbs) + Interface
+ - Cache API
+ - Swagger Docs for Cache API
 
 _For Database (MongoDB) option there is also:_
 
- - LoggerService saves loges to the Mongo Logs collection
- - Logs Mongo Model
- - Database controller (Set up / close connection, Error handling)
- - Logs controller (Read, Delete)
- - API for logs
+ - LoggerService saves loges to the MongoDB Logs collection + Interface
+ - Logs Model + Logs controller (Read, Delete) + Interfaces
+ - MongoDB connection controller (Set up / close connection, Error handling)
+ - Logs API
+ - Swagger Docs for Logs API
 
 _For Docker option there is also:_
 
  - .dockerignore
  - Dockerfile for server
- - docker-compose.yml (with optional options: Redis, Mongo)
+ - docker-compose.yml (If RedisDB or MongoDB options - also adds them into docker-compose)
 
 ### Client Templates
 
@@ -128,7 +127,7 @@ _Structure for app directory:_
 │   ├── components
 │   │   ├── card
 │   │   ├── loader
-│   │	└── index.ts
+│   │	  └── index.ts
 │   ├── interfaces
 │   │	└── index.ts
 │   ├── pages
@@ -139,7 +138,7 @@ _Structure for app directory:_
 │   │   ├── not-found
 │   │   ├── offline
 │   │   ├── settings
-│   │	└── index.ts
+│   │	  └── index.ts
 │   ├── services
 │   │   ├── tests
 │   │   ├── alert.service.ts
@@ -148,7 +147,7 @@ _Structure for app directory:_
 │   │   ├── helpers.service.ts
 │   │   ├── index.ts
 │   │   ├── loader.service.ts
-│   │	└── user.service.ts
+│   │	  └── user.service.ts
 │   ├── utils
 │   │	├── config.ts
 │   │	├── constants.ts
